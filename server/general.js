@@ -247,8 +247,8 @@ exports.plugin = {
 				introPresentation.add('slideNumber', 1);
 				netention.pub(introPresentation);
 			}
-			indexPDF('Spacetime-Tag Planning', 'doc/netention_spacetime_tag_planning.pdf');
-			indexPDF('Netention Theory', 'doc/seh_netention_intro.pdf');
+			//indexPDF('Spacetime-Tag Planning', 'doc/netention_spacetime_tag_planning.pdf');
+			//indexPDF('Netention Theory', 'doc/seh_netention_intro.pdf');
 
         },
 		stop: function(netention) { }

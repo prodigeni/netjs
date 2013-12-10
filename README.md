@@ -1,4 +1,4 @@
-![Netention logo](https://raw.github.com/automenta/netentionjs2/master/doc/netention_logo_6.small.png)
+![Netention logo](https://raw.github.com/sseehh/netjs/master/doc/netention_logo_6.small.png)
 
 Netention for Node.JS
 =====================

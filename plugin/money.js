@@ -1,3 +1,4 @@
+/*
 ways of obtaining money
 	work
 	crowdfunding
@@ -5,3 +6,4 @@ ways of obtaining money
 	...
 
 
+*/

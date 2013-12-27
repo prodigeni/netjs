@@ -71,6 +71,9 @@ div.olMapViewport {
      z-index: 1;
 }
 
+#uilanguage {
+	font-size: 75%;
+}
 
 #CurrentInterests {
     clear: both;

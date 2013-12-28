@@ -160,6 +160,15 @@ function popupAboutDialog() {
 
 $(document).ready(function() {
 
+    var themeSelect = $('#uitheme');
+    for (var k in themes) {
+        themeSelect.append($('<option id="' + k + '">' + themes[k] + '</option>' ));
+    }
+    themeSelect.change(function() {
+        var t = $(this).children(":selected").attr("id");
+        setTheme(t);
+    });
+
 	
     if (configuration.enableAnonymous)
         $('#AnonymousLoginButton').show();

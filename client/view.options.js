@@ -37,17 +37,9 @@ function renderOptions(s, o, v) {
    
     $('#Options').show();
 
-    var themeSelect = $('<select id="themeSelect"/>');    
-    for (var k in themes) {
-        themeSelect.append($('<option id="' + k + '">' + themes[k] + '</option>' ));
-    }
-    themeSelect.change(function() {
-        var t = $(this).children(":selected").attr("id");
-        setTheme(t);
-    });
 
-    v.append('<h1>Theme</h1>');
-    v.append(themeSelect);
+    //v.append('<h1>Theme</h1>');
+    //v.append(themeSelect);
     
     v.append('<h1>Plugins</h1>');
     

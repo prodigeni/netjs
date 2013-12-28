@@ -42,6 +42,10 @@ function objNew(id, name) {
 		return objAddValue(x, k, v);
 	};
 
+	/*x.objSpacePoint = function(latitude, longitude) {
+		return objSpacePointLatLng
+	}*/
+
     return x;
 }
 exports.objNew = objNew;

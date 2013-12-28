@@ -76,21 +76,9 @@ exports.plugin = plugin;
 /**
  * init - callback function that is invoked after the server is created but before it runs
  */
-exports.start = function(host, port, dbURL, init) {
+exports.start = function(options, init) {
 
-    console.log('Starting');
-
-    var Server = {
-        name: 'Netention',
-        description: 'http://netention.org',
-        memoryUpdatePeriodMS: 5000,
-        plugins: {},
-        permissions: {},
-    };
-
-    Server.host = host;
-    Server.port = port;  
-    Server.databaseURL = dbURL;
+    var Server = options;
 
     var focusHistory = [ ];
     var focusHistoryMaxAge = 24*60*60; //in seconds
@@ -722,7 +710,7 @@ exports.start = function(host, port, dbURL, init) {
         res.sendfile('./client/index.html');
     });
     express.get('/client_configuration.js', function(req, res) {        
-        res.sendfile("./client.js");        
+        res.sendfile("./webserver.client.js");        
     });
 
     // Accept the OpenID identifier and redirect the user to their OpenID
@@ -1088,6 +1076,54 @@ exports.start = function(host, port, dbURL, init) {
             sendJSON(res, x);
         });
     });
+    express.get('/input/geojson/*', function(req, res) {
+		var url = req.params[0] || '';
+
+        http.get(url, function(res) {
+			//var kml = jsdom(fs.readFileSync(url, 'utf8'));
+            var page = '';
+            res.on("data", function(chunk) { page += chunk;  });
+            res.on('end', function() {
+				var tj = require('togeojson'),
+					// node doesn't have xml parsing or a dom. use jsdom
+					jsdom = require('jsdom').jsdom;
+
+				var kml = jsdom(page);
+				var converted = tj.kml(kml)['features'];
+
+				var n = 0;
+				_.each(converted, function(o) {
+					if (o.type == 'Feature') {
+						/* { type: 'Feature',
+						geometry:
+						{ type: 'Point',
+						coordinates: [ -145.1312560955501, 62.3909807260417, 0 ] },
+						properties: { name: 'Power Plants' } } */
+						var id = url + '#' + (n++);
+						var name = '';
+						var coords = null;
+
+						if (o['geometry']) {
+							if (o['geometry']['coordinates'])
+								coords = o['geometry']['coordinates'];
+						}
+						if (o['properties'])
+							name = o['properties']['name'] || '';
+
+						var x = util.objNew(id, name);
+						x = util.objAddTag(x, 'Item');
+						x = util.objAddGeoLocation(x, coords[1], coords[0]);
+						pub(x);
+					}
+				});
+
+				//var converted_with_styles = tj.kml(page, { styles: true });
+				//console.log(converted_with_styles);
+            });
+
+		});
+    });
+
     express.get('/schema/json', function(req, res) {
         sendJSON(res, { 'tags': tags, 'properties': properties } );
     });
@@ -1639,7 +1675,9 @@ exports.start = function(host, port, dbURL, init) {
     require('./general.js').plugin.start(that, util);
 
 
-    that.permissions = Server.permissions;
+    that.permissions = options.permissions || { };
+	that.enablePlugins = options.plugins || [];
+
 	that.server = Server;
 	that.nlog = nlog;
 	that.plugin = function(pluginfile, forceEnable) {
@@ -1673,7 +1711,8 @@ exports.start = function(host, port, dbURL, init) {
 
     nlog('Ready');
 
-    init(that);
+	if (init)
+	    init(that);
 
     return that;
 

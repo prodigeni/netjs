@@ -25,7 +25,9 @@
 		"cheerio":"",
 		"rdfstore":"",
 		"kmeans":"",
-		"telehash": ""
+		"telehash": "",
+		"jsdom": "",
+		"togeojson":""
     },
     "engines": {
 		"node": "0.8.x", 

@@ -17,8 +17,12 @@ function showAvatarMenu(b) {
 
 function openSelectProfileModal(title) {
 	if (!title) title = 'Profiles';
-    var d = newPopup(title, {width: '450px', modal: true});
-    d.append(newProfileWidget());
+    //var d = newPopup(title, {width: '450px', modal: true});
+	$('#LoadingSplash').show();
+	$('#LoadingSplashTitle').html('Authenticated: ' + getCookie('authenticated'));
+	$('#LoadingSplashTitle').append(' (<a href="/logout">Logout</a>)');
+	$('#AuthSelect').hide();
+	$('#ProfileSelect').html(newProfileWidget());
 }
 
 $('#SelectProfileButton').click(function() { openSelectProfileModal()  });

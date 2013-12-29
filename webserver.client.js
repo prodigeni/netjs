@@ -19,7 +19,8 @@ var configuration = {
 //all hardcoded stuff here is temporary until icons are specified by ontology
 var defaultIcons = { 
     'default': '/icon/rrze/status/true.png',
-	'Favorite': '/icon/rrze/status/error.png',
+	'Favorite': '/icon/rrze/actions/observe.png',
+	'Goal': '/icon/rrze/status/error.png',
     'Earthquake': '/icon/quake.png',
     'NuclearFacility': '/icon/nuclear.png',
     'Human': '/icon/rrze/emblems/crown.png',

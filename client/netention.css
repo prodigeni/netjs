@@ -1122,6 +1122,11 @@ a.openModal:focus {
 	float: right;
 	width: 62%;
 }
+.goallistTimestamp { font-size: 120%; font-weight: bold; }
+#goalviewList div {	margin-bottom: 1em; } 
+/*#goalviewList div:nth-child(odd) {	background: #ddd; } 
+#goalviewList div:nth-child(even) {	background: #eee; } */
+
 .GoalSummary {
 	border: 2px solid gray;
 	margin: 5px;

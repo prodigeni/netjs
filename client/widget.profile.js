@@ -2,8 +2,10 @@
 
 function newProfileWidget() {
     var d = newDiv();
+
     function closeDialog() {
-        d.parent().dialog('close');            
+        //d.parent().dialog('close');            
+		$('#LoadingSplash').hide();
     }
 
     function become(u) {

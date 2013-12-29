@@ -50,8 +50,9 @@ function saveGoalTags(gt, when) {
 			self.notice(ng);
 		});		
 
-		saveSelf();				
 	});
+
+	saveSelf();				
 }
 
 
@@ -256,7 +257,7 @@ function renderGoal(v) {
 			var goals = self.getGoals(ti, ti+timeUnitLengthMS);
 
 			var ts = new Date(ti);
-			d.append(ts);
+			d.append('<span class="goallistTimestamp">' + ts + '</span>');
 
 			var addbutton = $('<button title="Add Tag">[+]</button>');
 			d.append(addbutton);

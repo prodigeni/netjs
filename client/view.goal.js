@@ -279,10 +279,12 @@ function renderGoal(v) {
 			}; y();
 
 			_.each(goals, function(g) {
-				var gg = newObjectSummary( g );
-				var ogg = objTags(gg);
+				var ogg = objTags(g);
+				console.log(ogg);
 				if (_.contains(ogg, 'PlanCentroid'))
 					return;
+
+				var gg = newObjectSummary( g );
 				gg.addClass('miniGoalSummary');
 				d.append(gg);
 			});

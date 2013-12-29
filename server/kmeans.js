@@ -1,6 +1,8 @@
 var _ = require('underscore');
 var kmeans = require('kmeans');
 
+var IgnoreTags = [ 'Goal' ];
+
 function hoursFromNow(n) { return Date.now() + 60.0 * 60.0 * 1000.0 * n;     }
 
 function getSpaceTimeTagCentroids(points, centroids) {    
@@ -12,6 +14,7 @@ function getSpaceTimeTagCentroids(points, centroids) {
             tags = tags.concat(tt[3]);        
         }
         tags = _.unique(tags);
+		tags = _.difference(tags, IgnoreTags);
         return tags;
     }
 

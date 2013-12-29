@@ -74,7 +74,7 @@ function getSpaceTimeTagCentroids(points, centroids) {
     
     
     //TODO normalize lat/lon
-    
+
     var km = kmeans.create(obs, centroids);
     var maxIterations = 128;
     km.process = function() {
@@ -118,7 +118,8 @@ function getSpaceTimeTagCentroids(points, centroids) {
     for (var i = 0; i < m.length; i++) {
         var mm = m[i];
         var res = { 
-            location: [denormalize(mm[0],latNorm), denormalize(mm[1],lonNorm)], time: new Date(denormalize(mm[2], timeNorm))
+            location: [denormalize(mm[0],latNorm), denormalize(mm[1],lonNorm)], 
+			time: denormalize(mm[2], timeNorm)
         };
         if (mm.length > 3) {
             for (var k = 3; k < mm.length; k++) {

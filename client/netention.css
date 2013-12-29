@@ -1111,6 +1111,7 @@ a.openModal:focus {
     z-index: 5000;
 }
 
+
 #goalviewSidebar {
 	float: left;
 	width: 35%;
@@ -1124,6 +1125,13 @@ a.openModal:focus {
 .GoalSummary {
 	border: 2px solid gray;
 	margin: 5px;
+}
+.centroidSummary {
+	text-align: right;
+}
+.miniGoalSummary {
+	margin-left: 2em;
+	width: auto;
 }
 
 .timecell {

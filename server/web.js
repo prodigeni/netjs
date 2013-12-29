@@ -131,10 +131,12 @@ exports.start = function(options, init) {
 
                             var x = util.objNew();
                             x.name = 'Possible Meeting #' + (i+1);
-                            util.objAddGeoLocation(x, parseFloat(cc.location[0]), parseFloat(cc.location[1]));
-                            util.objSetWhen(x, new Date(cc.time).getTime()); 
+							x.when = cc.time;
+                            util.objAddTag(x, 'Goal');                            
+							util.objAddGeoLocation(x, parseFloat(cc.location[0]), parseFloat(cc.location[1]));
+                            //util.objSetWhen(x, new Date(cc.time)); 
                             util.objAddTag(x, 'Imaginary');
-                            util.objAddTag(x, 'PlanCentroid');
+                            util.objAddTag(x, 'PlanCentroid');					
 
                             delete cc.location;
                             delete cc.time;
@@ -927,23 +929,21 @@ exports.start = function(options, init) {
     function getPlans(withPlan) {
         var allPlan = [];
         var now = Date.now();
-        getObjectsByTag('User', function(x) {
-            if (x.plan) {
-                for (var t in x.plan) {
-                    var tp = parseInt(t);
-                    if (tp < now) 
-                        continue;
-                    var tt = x.plan[t];
-                    var geo = util.objSpacePoint(x);
-                    var lat = null;
-                    var lon = null;
-                    if (geo) {
-                        lat = geo.lat;
-                        lon = geo.lon;
-                    }
-                    allPlan.push([util._n(lat, 4), util._n(lon, 4), tp, tt, x.id]);
-                }
-            }                   
+        getObjectsByTag('Goal', function(t) {
+            var tt = t.when;
+			if (!t.when)
+				return;
+			if (tt < now)
+				return;
+            var lat = null;
+            var lon = null;
+            var geo = util.objSpacePoint(t);
+            if (geo) {
+                lat = geo.lat;
+                lon = geo.lon;
+            }
+			var tags = util.objTags(t);
+            allPlan.push([util._n(lat, 4), util._n(lon, 4), tt, tags, t]);
         }, function() {
             withPlan(allPlan);
         });        

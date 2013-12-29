@@ -222,9 +222,9 @@ $(document).ready(function() {
 
         self.clear();
 
-        self.loadSchemaJSON('/schema/json', function() {            
+        self.loadSchemaJSON('/ontology/json', function() {            
 			ll.pnotify({
-					text: 'Schema ready. Loading objects...'
+					text: 'Ontology ready. Loading objects...'
 			});
 
             self.getLatestObjects(configuration.maxStartupObjects, function() {

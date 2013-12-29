@@ -1124,7 +1124,7 @@ exports.start = function(options, init) {
 		});
     });
 
-    express.get('/schema/json', function(req, res) {
+    express.get('/ontology/json', function(req, res) {
         sendJSON(res, { 'tags': tags, 'properties': properties } );
     });
 

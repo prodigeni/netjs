@@ -42,6 +42,12 @@ function objNew(id, name) {
 		return objAddValue(x, k, v);
 	};
 
+	x.own = function() {
+		if (self)
+			x.author = self.id();
+		return x;
+	};
+
 	/*x.objSpacePoint = function(latitude, longitude) {
 		return objSpacePointLatLng
 	}*/

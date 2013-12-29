@@ -148,6 +148,8 @@ var generalTags = [
 	}, //=Project=Program=Plan=Opportunity
 		//state = considered|desired|active|completed
 
+	{ uri: 'Favorite', name: 'Favorite'}, 
+
 	{ uri: 'User', name: 'User'}, 
 	//{ uri: 'Netention', name: 'Netention'}, //Netention itself, meta 
 

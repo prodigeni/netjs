@@ -281,8 +281,10 @@ function netention(f) {
                         whenConnected();
                     }
 
-					TogetherJS.reinitialize();
-					TogetherJS.refreshUserData();
+					if (TogetherJS) {
+						TogetherJS.reinitialize();
+						TogetherJS.refreshUserData();
+					}
 
                 });
                 

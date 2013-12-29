@@ -1218,9 +1218,29 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
     //var hb = newDiv().addClass('ObjectViewHideButton ui-widget-header ui-corner-tl');
     var hb = newDiv().addClass('ObjectViewHideButton ui-corner-tl'); //without ui-widget-header, it is faster CSS according to Chrome profiler
     
-    var favoriteButton = $('<button title="Favorite" class="ui-widget-content ui-button ui-corner-tl">*</button>');
+    var favoriteButton = $('<button title="Toggle Favorite" class="ui-widget-content ui-button ui-corner-tl">*</button>');
 	favoriteButton.click(function() {
-		$.pnotify('Selecting "Favorite" objects not available yet.');
+		var ot = objTags(x);
+		var exists = _.contains(ot, 'Favorite');
+		if (!exists) {
+			$.pnotify('Added favorite.');
+			x = objAddTag(x, 'Favorite');
+		}
+		else {
+			$.pnotify('Removed favorite.');
+			var n = ot.indexOf('Favorite');
+			x = objRemoveValue(x, n);
+		}
+
+   		self.pub(x, function (err) {
+            $.pnotify({
+                title: 'Error updating Favorite',
+                text: err,
+                type: 'Error'
+            })                        
+        }, function() {
+            self.notice(x);
+        });
 	});
 
     hb.append(favoriteButton);

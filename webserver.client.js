@@ -12,12 +12,14 @@ var configuration = {
     defaultTheme: '_cybernetic',
 	requireIdentity: false,
 	maxStartupObjects: 8192,
-	defaultMapMode2D: true //true=2d, false=3d
+	defaultMapMode2D: true, //true=2d, false=3d
+	enableTogetherJS: false
 };
 
 //all hardcoded stuff here is temporary until icons are specified by ontology
 var defaultIcons = { 
     'default': '/icon/rrze/status/true.png',
+	'Favorite': '/icon/rrze/status/error.png',
     'Earthquake': '/icon/quake.png',
     'NuclearFacility': '/icon/nuclear.png',
     'Human': '/icon/rrze/emblems/crown.png',

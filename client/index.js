@@ -158,6 +158,8 @@ function popupAboutDialog() {
     });
 }
 
+var TogetherJS;
+
 $(document).ready(function() {
 
     var themeSelect = $('#uitheme');
@@ -169,6 +171,13 @@ $(document).ready(function() {
         setTheme(t);
     });
 
+	if (configuration.enableTogetherJS) {
+		loadJS('https://togetherjs.com/togetherjs-min.js');
+		$('#TogetherJSTalk').show();
+	}
+	else {
+		TogetherJS = null;
+	}
 	
     if (configuration.enableAnonymous)
         $('#AnonymousLoginButton').show();

@@ -33,6 +33,7 @@ function saveGoalTags(gt, when) {
 		else
 			ng.delay = 0; //NOW
 
+		ng.own();
 		ng = objName(ng, g);
 		ng = objAddTag(ng, 'Goal');
 		ng = objAddTag(ng, g);
@@ -280,7 +281,6 @@ function renderGoal(v) {
 
 			_.each(goals, function(g) {
 				var ogg = objTags(g);
-				console.log(ogg);
 				if (_.contains(ogg, 'PlanCentroid'))
 					return;
 

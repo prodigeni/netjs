@@ -5,8 +5,8 @@ function renderChat(v) {
     var content = newDiv().attr('class', 'ChatViewContent');    
     var input = newChatInput(function(x) {
         var o = objNew();
-        o.author = self.id();
-        objName(o, x);
+		o = o.own();
+        o = objName(o, x);
 		o = objAddTag(o, 'Message');
         self.pub(o, function(err) {
             $.pnotify({

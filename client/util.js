@@ -1050,11 +1050,11 @@ exports.objExpand = objExpand;
 
 
 function goals(time, goalList) {
-	var m = objNew();
+	/*var m = objNew();
 	objName(m, 'Synchronous @ 1min');
 	m = objAddTag(m, 'Goal');
 	m = objAddValue(m, 'synchronous', { every: 60000, delay: 0 } );
-	goalList.push(m);
+	goalList.push(m);*/
 
 	return _.map(goalList, function(g) {
 		var x = _.clone(g);				

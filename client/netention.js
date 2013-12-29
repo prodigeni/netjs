@@ -465,9 +465,18 @@ function netention(f) {
                 this.socket.emit('setPlugin', pid, enabled, callback);                    
             },
             
-			getGoals: function(when /*, mineOnly */) {
+			getGoals: function(from, to /*, mineOnly */) {
 				var that = this;
-				return goals(when, _.map(this.objectsWithTag('Goal'), function(id) { return that.getObject(id); } ));
+
+				if (from == null) {
+					return _.where(_.map(this.objectsWithTag('Goal'), function(id) { return that.getObject(id); } ), { delay: 0 });
+				}
+
+				return _.filter(_.map(this.objectsWithTag('Goal'), function(id) { return that.getObject(id); } ), function(x) { 
+					if (x.delay == 0) return false;
+					var w = x.when || 0;
+					return ((w >= from) && (w < to));
+				} );
 			},
 
             getLatestObjects : function(num, onFinished) {

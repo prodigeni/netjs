@@ -1115,7 +1115,7 @@ a.openModal:focus {
 	float: left;
 	width: 35%;
 	height: 97%;
-	overflow: scroll;
+	overflow: auto;
 }
 #goalviewList {
 	float: right;

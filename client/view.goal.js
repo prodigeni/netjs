@@ -24,65 +24,85 @@ function newGoalWidget(g)  {
 	return d;
 }
 
-function renderGoal(v) {
-	var sidebar = newDiv('goalviewSidebar');
-	var goalList = newDiv('goalviewList');
+function saveGoalTags(gt, when) {
+	_.each(gt, function(g) {
+		var ng = objNew();
 
-	sidebar.html(newProtogoalMenu());
+		if (when)
+			ng.when = when;
+		else
+			ng.delay = 0; //NOW
 
-	v.append(sidebar);
-	v.append(goalList);
-
-
-	var now = true;
-	var goalTime = Date.now();
-
-	function updateGoalList() {
-		goalList.html('');
-
-		if (now)
-			goalTime = Date.now();
-
-		var nowButton = $('<button>Now</button>');
-		nowButton.click(function() {
-			now = true;
-			updateGoalList();
-		});
-		goalList.append(nowButton);
-
-		var st = newSelfTimeGrid(self.myself(), function(clickedTime) {
-			goalTime = clickedTime;
-			now = false;
-			updateGoalList();
-		});
-
-		goalList.append(st);
-
-		goalList.append('<br/>');
-		goalList.append('<hr/>');
-		goalList.append('NOW: ' + new Date(goalTime));
-
-		var goals = self.getGoals(goalTime);
-		for (var i = 0; i < goals.length; i++) {
-			goalList.append(newGoalWidget(goals[i]));
-		}
-	}
-	setInterval(updateGoalList, updatePeriod);
-	updateGoalList();
-
+		ng = objName(ng, g);
+		ng = objAddTag(ng, 'Goal');
+		ng = objAddTag(ng, g);
+		
+		self.pub(ng, function(err) {
+			$.pnotify({
+					title: 'Unable to save Goal.',
+					type: 'Error'            
+				});                
+			}, function() {
+				$.pnotify({
+					title: 'Goal saved (' + ng.id.substring(0,6) + ')'
+				});        
+			self.notice(ng);
+		});						
+	});
 }
 
-function newSelfTimeGrid(x, clicked) {
+
+function renderGoal(v) {
+	var numHours = 24;
+	var timeUnitLengthMS = 60 * 60 * 1000;
+
     var s = self;
-    var plan = x.plan;
-    if (!plan)
-        plan = { };
+	var plan = getPlan();
     
-    var numHours = 24;
+    var planTimes = _.keys(plan);
+    
+    var time = new Date();
+    time.setMinutes(0);
+    time.setSeconds(0);
+    time.setMilliseconds(0);
+    time = time.getTime();
+    
+    var d = newDiv();
+    d.attr('style', 'width:100%; overflow: auto;');
+
+    var planSlotTimes = { };
+    var planSlots = { };
+    
+    var centroidTimes = self.objectsWithTag('PlanCentroid');
+    if (!centroidTimes) centroidTimes = [];
+
+    var plans = [];
+    var centroids = [];
+    for (var k = 0; k < centroidTimes.length; k++) {
+        var pp = centroidTimes[k];
+        var ppo = self.object(pp);
+        var ppw = objWhen(ppo);
+        if ((ppw >= time) && (ppw < endtime))
+            centroids.push(ppo);
+    }
+    
+    for (var k = 0; k < planTimes.length; k++) {
+        var pp = planTimes[k];
+        if ((pp >= time) && (pp < endtime))
+            plans = plans.concat(plan[pp]);
+    }
+    //planSlotTimes[i] = time;
+    //planSlots[i] = _.unique(plans);
 
     function save() {
-        if (x.id !== s.myself().id)
+		if (!s.myself()) {
+			$.pnotify('Can not save; not identified.');
+			return;
+		}
+
+        if (self.id() !== s.myself().id)
             return;
+
         plan = { };
         for (var i = 0; i < numHours; i++) {
             var tt = planSlotTimes[i];
@@ -110,110 +130,211 @@ function newSelfTimeGrid(x, clicked) {
             });           
         });*/
     }
-    
-    var planTimes = _.keys(plan);
-    
-    var time = new Date();
-    time.setMinutes(0);
-    time.setSeconds(0);
-    time.setMilliseconds(0);
-    time = time.getTime();
-    
-    var d = newDiv();
-    d.attr('style', 'width:100%; overflow: auto;');
 
-    var planSlotTimes = { };
-    var planSlots = { };
+	function newSelfTimeGrid(clicked) {
+		
+		for (var i = 0; i < numHours; i++) {
+		    var cell = $('<a>');
+			cell.addClass('timecell');
+
+			//http://css-tricks.com/how-to-create-a-horizontally-scrolling-site/
+			var fs = 100.0 * (0.25 + (numHours-i)/numHours);
+			cell.attr('style', 'display: inline-block;');
+
+		    var endtime = time + 60.0 * 60.0 * 1000.0 * 1.0;
+		    var timed = new Date(time);
+		    var rowHeader = newDiv();
+
+			/*
+		    if (i % 12 == 0) {
+		        rowHeader.html(timed.toLocaleDateString() + ': ' + timed.toLocaleTimeString());            
+		    }
+		    else {
+		        rowHeader.html(timed.toLocaleTimeString());                        
+		    }*/
+			var lds = timed.toLocaleDateString()
+			cell.attr('title', timed.toLocaleDateString() + ': ' + timed.toLocaleTimeString());
+			rowHeader.html(timed.toLocaleTimeString().substring(0, 2));
+		    
+		    var t = newDiv();        
+		    var u = newDiv();
+		    
+		    
+		    
+		    t.append('&nbsp;');
+		    _.each(plans, function(p) {
+		        t.append(newTagButton(p));
+		        t.append('&nbsp;');
+		    });
+		    
+		    _.each(centroids, function(c) {
+		        u.append(newObjectSummary(c));
+		    });
+		    
+		    if (plans.length > 0)
+		        t.addClass('SelfTimeFilled');
+
+		    (function(i, time, endtime) {
+		        cell.click(function() {
+		            var targetTime = (time + endtime)/2.0;
+					clicked(time);
+					/*
+		            var targetTime = (time + endtime)/2.0;
+		            var d = newPopup("Select Tags for " + new Date(targetTime), {width: 800, height: 600, modal: true});
+		            d.append(newTagger(planSlots[i], function(results) {
+		                planSlots[i] = results;
+		                later(function() {
+		                    save();                    
+		                    d.dialog('close');                        
+		                });
+		                //container.html(newSelfTimeList(s, x, container));
+		            }));
+					*/
+		        });
+		    })(i, time, endtime);
+		    
+			cell.append(rowHeader);
+		    cell.append(t);
+		    cell.append(u);
+		    d.append(cell);
+		    time = endtime;
+		}
+		
+		return d;
+	}
     
-    var centroidTimes = self.objectsWithTag('PlanCentroid');
-    if (!centroidTimes) centroidTimes = [];
-    
-    for (var i = 0; i < numHours; i++) {
-        var cell = $('<a>');
-		cell.addClass('timecell');
 
-		//http://css-tricks.com/how-to-create-a-horizontally-scrolling-site/
-		var fs = 100.0 * (0.25 + (numHours-i)/numHours);
-		cell.attr('style', 'display: inline-block;');
 
-        var endtime = time + 60.0 * 60.0 * 1000.0 * 1.0;
-        var timed = new Date(time);
-        var rowHeader = newDiv();
+	var sidebar = newDiv('goalviewSidebar');
+	{
+		function newNowDiv() {
+			sidebar.empty();
 
-		/*
-        if (i % 12 == 0) {
-            rowHeader.html(timed.toLocaleDateString() + ': ' + timed.toLocaleTimeString());            
-        }
-        else {
-            rowHeader.html(timed.toLocaleTimeString());                        
-        }*/
-		var lds = timed.toLocaleDateString()
-		cell.attr('title', timed.toLocaleDateString() + ': ' + timed.toLocaleTimeString());
-		rowHeader.html(timed.toLocaleTimeString().substring(0, 2));
-        
-        var t = newDiv();        
-        var u = newDiv();
-        
-        
-        var plans = [];
-        var centroids = [];
-        for (var k = 0; k < centroidTimes.length; k++) {
-            var pp = centroidTimes[k];
-            var ppo = self.object(pp);
-            var ppw = objWhen(ppo);
-            if ((ppw >= time) && (ppw < endtime))
-                centroids.push(ppo);
-        }
-        
-        for (var k = 0; k < planTimes.length; k++) {
-            var pp = planTimes[k];
-            if ((pp >= time) && (pp < endtime))
-                plans = plans.concat(plan[pp]);
-        }
-        planSlotTimes[i] = time;
-        planSlots[i] = _.unique(plans);
-        
-        t.append('&nbsp;');
-        _.each(plans, function(p) {
-            t.append(newTagButton(p));
-            t.append('&nbsp;');
-        });
-        
-        _.each(centroids, function(c) {
-            u.append(newObjectSummary(c));
-        });
-        
-        if (plans.length > 0)
-            t.addClass('SelfTimeFilled');
+			//sidebar.html(newProtogoalMenu());	
+			sidebar.append('NOW');
 
-        (function(i, time, endtime) {
-            cell.click(function() {
-                var targetTime = (time + endtime)/2.0;
-				clicked(time);
-				/*
-                var targetTime = (time + endtime)/2.0;
-                var d = newPopup("Select Tags for " + new Date(targetTime), {width: 800, height: 600, modal: true});
-                d.append(newTagger(planSlots[i], function(results) {
-                    planSlots[i] = results;
-                    later(function() {
-                        save();                    
-                        d.dialog('close');                        
-                    });
-                    //container.html(newSelfTimeList(s, x, container));
-                }));
-				*/
-            });
-        })(i, time, endtime);
-        
-		cell.append(rowHeader);
-        cell.append(t);
-        cell.append(u);
-        d.append(cell);
-        time = endtime;
-    }
-    
-    return d;
+
+			var addbutton = $('<button title="Add Tag">[+]</button>');
+			sidebar.append(addbutton);
+			sidebar.append('<button title="Set Focus To This Goal">Focus</button>')
+			sidebar.append('<button title="Clear">[x]</button>');
+			sidebar.append('<hr/>');
+
+			var now = self.getGoals(null);
+			_.each(now, function(g) {
+				sidebar.append( newObjectSummary(g) );
+			});
+
+			addbutton.click(function() {
+				var d = newPopup("Select Tags for NOW", {width: 800, height: 600, modal: true});
+		        d.append(newTagger(now, function(results) {
+					saveGoalTags(results);
+
+		            //now = _.unique(now.concat(results));
+		            later(function() {
+		                d.dialog('close');                        
+						newNowDiv();
+		            });
+		            //container.html(newSelfTimeList(s, x, container));
+		        }));
+			});
+
+		}
+
+		newNowDiv();
+	}
+	v.append(sidebar);
+
+	var goalList = newDiv('goalviewList');
+	v.append(goalList);
+
+
+	var now = true;
+	var goalTime = Date.now();
+
+	function updateGoalList() {
+		goalList.html('');
+
+
+		for (var i = 0; i < numHours; i++) {
+			var d = newDiv();
+			d.addClass('ui-widget-content');
+			d.addClass('ui-corner-all');
+
+			var ti = time + (i * timeUnitLengthMS);
+			
+			var goals = self.getGoals(ti, ti+timeUnitLengthMS);
+
+			var ts = new Date(ti);
+			d.append(ts);
+
+			var addbutton = $('<button title="Add Tag">[+]</button>');
+			d.append(addbutton);
+
+			var y = function() {
+				var tti = ti;
+				var tts = ts;
+				addbutton.click(function() {
+					var d = newPopup("Select Tags for " + tts, {width: 800, height: 600, modal: true});
+				    d.append(newTagger([], function(results) {
+						saveGoalTags(results, tti+timeUnitLengthMS/2);
+
+				        //now = _.unique(now.concat(results));
+				        later(function() {
+				            d.dialog('close');                        
+							updateGoalList();
+				        });
+				        //container.html(newSelfTimeList(s, x, container));
+				    }));
+				});
+			}; y();
+
+			_.each(goals, function(g) {
+				d.append(newObjectSummary( g ));
+			});
+
+			goalList.append(d);			
+		}
+
+/*		if (now)
+			goalTime = Date.now();
+
+		var st = newSelfTimeGrid(function(clickedTime) {
+			goalTime = clickedTime;
+			now = false;
+			updateGoalList();
+		});
+
+		goalList.append(st);
+
+		goalList.append('<br/>');
+		goalList.append('<hr/>');
+		goalList.append('NOW: ' + new Date(goalTime));
+
+		var goals = self.getGoals(goalTime);
+		for (var i = 0; i < goals.length; i++) {
+			goalList.append(newGoalWidget(goals[i]));
+		}*/
+	}
+	setInterval(updateGoalList, updatePeriod);
+	updateGoalList();
+
 }
+
+function getPlan() {
+	if (!self.myself())
+		return { };
+
+    var plan = self.myself().plan;
+    if (!plan) {
+        plan = self.myself().plan = { };
+	}
+
+	return plan;
+}
+
+
+
 
 
 //OLD, becoming deprecated:
@@ -309,8 +430,10 @@ function newSelfTimeList(x, container) {
             if ((pp >= time) && (pp < endtime))
                 plans = plans.concat(plan[pp]);
         }
-        planSlotTimes[i] = time;
-        planSlots[i] = _.unique(plans);
+        for (var i = 0; i < numHours; i++) {
+		    planSlotTimes[i] = time;
+		    planSlots[i] = _.unique(plans);
+		}
         
         t.append('&nbsp;');
         _.each(plans, function(p) {

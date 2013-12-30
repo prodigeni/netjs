@@ -134,6 +134,7 @@ exports.plugin = {
 };
 
 var RSSFeed = function(url, perArticle) {
+
 	if (!process)
 		process = function(x) { return x; };
 	
@@ -177,20 +178,33 @@ var RSSFeed = function(url, perArticle) {
 
 		
 	var fp = new feedparser();
-	request(url).pipe(fp).on('error', function(error) {
+	console.log('rss', fp, url);
+
+	request(url).pipe(fp)
+	  .on('error', function(error) {
 		// always handle errors
-		console.log(error);
+		console.log('RSS request error: ' + url + ' :' + error);
 	}).on('meta', function(data) {
 		// always handle errors
 		//onArticle(data);
 		//console.log(data, 'META');
-
+	}).on('readable', function() {
+		var stream = this, item;
+		while (item = stream.read()) {
+			//console.log('Got article: %s', item.title || item.description);
+			onArticle(item);
+		}
+    }).resume();
+/*
 	}).on('end', function() {
+		console.log('got feed', fp.articles);
+
 		var articles = fp.articles;
 		for (var i = 0; i < articles.length; i++) {
 			onArticle(articles[i]);
 		}
-	});
+	}).resume();
+*/
 
 	
 }

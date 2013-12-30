@@ -10,6 +10,7 @@ var themes = {
     "_cybernetic": 'Cybernetic',
     "_notebook": 'Notebook',
     "_rainforest": 'Rainforest',
+    "_metamaps": 'MetaMaps',
     "black-tie": 'Black Tie',
     "blitzer": 'Blitzer',
     "cupertino": 'Cupertino',

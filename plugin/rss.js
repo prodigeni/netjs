@@ -178,7 +178,6 @@ var RSSFeed = function(url, perArticle) {
 
 		
 	var fp = new feedparser();
-	console.log('rss', fp, url);
 
 	request(url).pipe(fp)
 	  .on('error', function(error) {

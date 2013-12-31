@@ -29,17 +29,17 @@ function addAction(a) {
 	if (!a.menu) 	{ 		console.error('addAction missing menu: ' + a); 	return; 	}
 	if (!a.name) 	{ 		console.error('addAction missing name: ' + a); 	return; 	}
 	if (!a.accepts) { 		console.error('addAction missing accepts: ' + a); 	return; 	}
-	if (!a.run) 	{ 		console.error('addAction missing run: ' + a); 	return; 	}
 	Actions.push(a);
 	if (!ActionMenu[a.menu])
 		ActionMenu[a.menu] = [];
-	ActionMenu[a.menu] = a;
+	ActionMenu[a.menu].push(a);
 }
 
 var refreshActionContext = _.throttle(function() {
 	later(function() {
-		//get selected items from .ObjectSelection
 		var s = [];
+
+		//get selected items from .ObjectSelection
 		$('.ObjectSelection:checked').each(function( index ) {
 			var x = $( this );
 			s.push( x.attr('oid') );
@@ -65,8 +65,50 @@ var refreshActionContext = _.throttle(function() {
 
 
 		var u = $('<ul id="ActionMenu"></ul>');
-		u.append('<li><a href="#">Action1</a></li>');
-		u.append('<li><a href="#">SubMenu</a><ul><li><a href="#">Action2</a></li></ul></li>');
+
+		/*u.append('<li><a href="#">Action1</a></li>');
+		u.append('<li><a href="#">SubMenu</a><ul><li><a href="#">Action2</a></li></ul></li>');*/
+
+		_.each( ActionMenu, function(v, k) {
+			var menu = k;
+			var submenu = $('<li><a href="#">' + menu + '</a></li>');
+			var subcontents = $('<ul></ul>');
+			submenu.append(subcontents);
+
+			_.each(v, function(vv) {
+				var a = $('<button>' + vv.name +'</button>');
+
+				var accepts = vv.accepts(s);
+
+				if (accepts) {
+					var clickFunction = function() {
+						if (vv.run) {
+							later(function() {
+								var result = vv.run(s);
+								$.pnotify(result);
+							});
+						}
+						else {
+							$.pnotify(vv.name + ' support not ready yet.');
+						}					
+					}
+				}
+				else {
+					a.attr('style', 'opacity: 0.4');
+					a.attr('disabled', 'true');
+				}
+
+
+				a.click(clickFunction);
+
+				var la = $('<li></li>'); la.append(a);
+				subcontents.append(la);
+			});
+
+			u.append(submenu);
+			
+		});
+
 		u.menu();
 
 		$('#ActionMenuWrapper').append(u);
@@ -685,7 +727,21 @@ function netention(f) {
 	            	this.socket.emit('unsubscribe', channel);
 				}
             },
-            
+
+			publish: function(obj) {
+				self.pub(obj, function(err) {
+				    $.pnotify({
+				        title: 'Unable to save ' + obj.id,
+				        type: 'Error'
+				    });                
+				}, function() {
+				    $.pnotify({
+				        title: 'Saved (' + obj.id.substring(0,6) + ')'
+				    });        
+				    self.notice(obj);
+				});
+			},
+
             pub: function(object, onErr, onSuccess) {
 				if (this.socket) {
 		            this.socket.emit('pub', objCompact(object), function(err) {

@@ -8,17 +8,7 @@ function renderChat(v) {
 		o = o.own();
         o = objName(o, x);
 		o = objAddTag(o, 'Message');
-        self.pub(o, function(err) {
-            $.pnotify({
-                title: 'Unable to save message.',
-                type: 'Error'            
-            });                
-        }, function() {
-            $.pnotify({
-                title: 'Saved (' + o.id.substring(0,6) + ')'
-            });        
-            self.notice(o);
-        });
+		self.publish(o);
 
     }).attr('class', 'ChatViewInput');
     

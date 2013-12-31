@@ -712,7 +712,19 @@ exports.start = function(options, init) {
         res.sendfile('./client/index.html');
     });
     express.get('/client_configuration.js', function(req, res) {        
-        res.sendfile("./netention.client.js");        
+		var configFile = 'netention.client.js';
+
+		fs.readFile(configFile, 'utf8', function (err,data) {
+		  	if (err) {
+				console.error('Missing configuration: ' + configFile);
+				return;
+			}
+			var cc = JSON.stringify( options.client );
+			var js = 'var configuration = ' + cc + ';\n';
+			js += 'configuration.enableAnonymous=' + options.permissions.enableAnonymous + ';\n';
+			js += data;
+			res.send(js);
+		});
     });
 
     // Accept the OpenID identifier and redirect the user to their OpenID

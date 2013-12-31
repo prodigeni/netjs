@@ -1,21 +1,5 @@
 /* Netention Client Configuration */
 
-var configuration = {
-    ui: 'ui.mobile.js',
-    initialView: 'list', //TODO null = use last known view
-    initialDisplayAvatarMenu: false,
-    enableAnonymous: true,
-    defaultAvatarIcon: '/icon/netention-160.jpg',
-    includeCanNeedNot: true,
-    wikiStartPage: 'Life', //'Portal:Contents',
-    showPlanOnSelfPage: true,
-    defaultTheme: '_cybernetic',
-	requireIdentity: false,
-	maxStartupObjects: 8192,
-	defaultMapMode2D: true, //true=2d, false=3d
-	enableTogetherJS: false
-};
-
 //all hardcoded stuff here is temporary until icons are specified by ontology
 var defaultIcons = { 
     'default': '/icon/rrze/status/true.png',

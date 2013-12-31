@@ -11,6 +11,7 @@ var themes = {
     "_notebook": 'Notebook',
     "_rainforest": 'Rainforest',
     "_metamaps": 'MetaMaps',
+    "_scroogle": 'Google',
     "black-tie": 'Black Tie',
     "blitzer": 'Blitzer',
     "cupertino": 'Cupertino',

@@ -281,19 +281,19 @@ function renderBrowseSlides(o, vv, slideControls) {
 					{ src: '/lib/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 
 					// Syntax highlight for <code> elements
-					{ src: '/lib/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					//{ src: '/lib/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
 
 					// Zoom in and out with Alt+click
 					{ src: '/lib/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
 
 					// Speaker notes
-					{ src: '/lib/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+					//{ src: '/lib/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
 
 					// Remote control your reveal.js presentation using a touch device
 					{ src: '/lib/reveal.js/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } },
 
 					// MathJax
-					{ src: '/lib/reveal.js/plugin/math/math.js', async: true }
+					//{ src: '/lib/reveal.js/plugin/math/math.js', async: true }
 				],
 
 
@@ -330,16 +330,18 @@ function renderBrowseSlides(o, vv, slideControls) {
 			autoSlide: 0,
 
 			// Enable slide navigation via mouse wheel
-			mouseWheel: false,
+			mouseWheel: true,
 
 			// Transition style
 			transition: 'default', // default/cube/page/concave/zoom/linear/fade/none
 
 			// Transition speed
-			transitionSpeed: 'default', // default/fast/slow
+			transitionSpeed: 'slow', // default/fast/slow
 
 			// Transition style for full page backgrounds
-			backgroundTransition: 'default' // default/linear/none
+			backgroundTransition: 'default', // default/linear/none,
+
+			embedded: true
 
 		});
 
@@ -410,12 +412,12 @@ function renderList(s, o, v) {
 
 	
 	function updateFont(s) {
-		var vp = parseInt((0.15 + (s/8.0)) * 100)		
+		var vp = parseInt((0.15 + (s/16.0)) * 100)		
 		v.css('font-size', vp + '%');
 	}
 
 	var slideControls = newDiv();
-	var textsizeSlider = $('<input type="range" name="points" min="1" value="8" max="16">');
+	var textsizeSlider = $('<input type="range" name="points" min="1" value="16" max="32">');
 	textsizeSlider.change(function(x) {
 		updateFont($(this).val());
 	});
@@ -425,10 +427,13 @@ function renderList(s, o, v) {
 
 	submenu.append(slideControls);
 
+	var actionMenu = $('<div id="ActionMenuWrapper"></div>');
+	submenu.append(actionMenu);
 
 	function update() {
 		v.html('');
 		listRenderer(o, v, slideControls);
+		refreshActionContext();
 	}
 	update();
 }

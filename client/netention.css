@@ -1112,6 +1112,41 @@ a.openModal:focus {
 }
 
 
+/* HORIZONTAL jquery-ui MENU - http://stackoverflow.com/questions/12944364/how-to-make-jquery-ui-nav-menu-horizontal */
+/* Clearfix for the menu */
+.ui-menu:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+.ui-menu .ui-menu-item {
+    display: inline-block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    width: auto;
+}
+#ActionMenu {
+	position: fixed;
+	z-index: 10;
+	bottom: 0;
+}
+/* ------------------------------- */
+
+
+.reveal {
+	font-size: 150% !important;
+	overflow: hidden;
+}
+.reveal section img {
+	margin: 0 !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
 #goalviewSidebar {
 	float: left;
 	width: 35%;

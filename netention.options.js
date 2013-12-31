@@ -8,11 +8,11 @@
     "memoryUpdatePeriodMS": 5000,
 
     "plugins": [
-		"rss.js", "irc.js"
+		"_rss.js", "_irc.js"
 	],
 
     "permissions": {
-		"enableAnonymous": false,
+		"enableAnonymous": true,
 		"authenticate_to_configure_plugins": false,
 		"authenticate_to_create_objects": false,
 		"authenticate_to_delete_objects": false,

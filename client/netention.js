@@ -12,6 +12,68 @@ var ID_UNKNOWN = 0;
 var ID_ANONYMOUS = 1;
 var ID_AUTHENTICATED = 2;
 
+var ExampleAction = {
+	menu: 'Object',
+	name: 'Example Action',
+	accepts: function(selection) {
+		return false;
+	},
+	run: function(selection) {
+		return "Example action completed."
+	}
+};
+
+var Actions = [];
+var ActionMenu = { };
+function addAction(a) {
+	if (!a.menu) 	{ 		console.error('addAction missing menu: ' + a); 	return; 	}
+	if (!a.name) 	{ 		console.error('addAction missing name: ' + a); 	return; 	}
+	if (!a.accepts) { 		console.error('addAction missing accepts: ' + a); 	return; 	}
+	if (!a.run) 	{ 		console.error('addAction missing run: ' + a); 	return; 	}
+	Actions.push(a);
+	if (!ActionMenu[a.menu])
+		ActionMenu[a.menu] = [];
+	ActionMenu[a.menu] = a;
+}
+
+var refreshActionContext = _.throttle(function() {
+	later(function() {
+		//get selected items from .ObjectSelection
+		var s = [];
+		$('.ObjectSelection:checked').each(function( index ) {
+			var x = $( this );
+			s.push( x.attr('oid') );
+		});
+
+		//jquery menu - http://jqueryui.com/menu/#default
+
+		if ($('#ActionMenu').destroy)
+			$('#ActionMenu').destroy();
+
+		//dont render the menu if the wrapper isnt visible:
+		if (! $('#ActionMenuWrapper').is(':visible') ) {
+			return;
+		}
+
+		$('#ActionMenuWrapper').html('');
+
+		if (s.length == 0)
+			return;
+
+		$('#ActionMenuWrapper').append(s.length + ' selected');
+		$('#ActionMenuWrapper').append('<br/>');
+
+
+		var u = $('<ul id="ActionMenu"></ul>');
+		u.append('<li><a href="#">Action1</a></li>');
+		u.append('<li><a href="#">SubMenu</a><ul><li><a href="#">Action2</a></li></ul></li>');
+		u.menu();
+
+		$('#ActionMenuWrapper').append(u);
+	});
+}, 850);
+
+
 function identity() {
 	var a = getCookie('authenticated');
 	if (a === 'anonymous') {

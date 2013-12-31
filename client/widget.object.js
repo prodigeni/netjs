@@ -1180,9 +1180,10 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
     
     var mini = (depthRemaining == 0);
     
-    var fs = (0.5 + r)*100.0 + '%';
 
-    var d = $('<div class="objectView ui-widget-content ui-corner-all" style="font-size:' + fs + '">');
+    var d = $('<div class="objectView ui-widget-content ui-corner-all">');
+	d.attr('style', "font-size:" + ((r) ? ( (0.5 + r)*100.0 + '%') : ("100%") ));
+	
     var xn = x.name;
     var authorID = x.author;
 
@@ -1207,7 +1208,7 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
             //TODO sort the replies by age, oldest first
             for (var i = 0; i < r.length; i++) {
                 var p = r[i];
-                replies.append(newObjectSummary(self.getObject(p), null, r*0.618, depthRemaining-1));
+                replies.append(newObjectSummary(self.getObject(p), null, /*r*0.618*/ null, depthRemaining-1));
             }
         }
         else {
@@ -1359,7 +1360,15 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
 		}
 	}
     
+	//Selection Checkbox
+	var selectioncheck = $('<input type="checkbox"/>');
+	selectioncheck.addClass('ObjectSelection');
+	selectioncheck.attr('oid', x.id);
+	selectioncheck.click(function() {
+		refreshActionContext();
+	});
 
+	//Name
 	if (x.name) {
 	    var haxn = $('<h1>');
 		if (nameNotClickable) {
@@ -1373,10 +1382,14 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
 		    });
 		    haxn.append(axn);
 		}
+		haxn.prepend(selectioncheck);
 		d.append(haxn);
 	}
+	else {
+		d.append(selectioncheck);
+	}
 	
-    var mdline = newDiv();
+    var mdline = $('<h2></h2>');
     mdline.addClass('MetadataLine');
 
     var ot = objTags(x);

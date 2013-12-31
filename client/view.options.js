@@ -12,6 +12,7 @@ var themes = {
     "_rainforest": 'Rainforest',
     "_metamaps": 'MetaMaps',
     "_scroogle": 'Google',
+    "_n$a": 'N$A',
     "black-tie": 'Black Tie',
     "blitzer": 'Blitzer',
     "cupertino": 'Cupertino',

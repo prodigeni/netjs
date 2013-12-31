@@ -34,8 +34,14 @@ function objNew(id, name) {
         x.name = name;
         
 	//TODO build convenient & friendly object API here
+	x.name = function(n) {
+		objName(x, n);
+		return x;
+	};
+
 	x.touch = function() {
 		objTouch(x);
+		return x;
 	};
 
 	x.add = function(k, v) {

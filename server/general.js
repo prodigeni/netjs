@@ -135,7 +135,7 @@ var generalTags = [
 
     { uri: 'Cause', name: 'Cause'},
     { uri: 'Effect', name: 'Effect'},
-
+	{ uri: 'Internet', name: 'Internet'},
 	{ uri: 'Goal', name: 'Goal',
 		properties: {
 			'repeatPeriod': { name: 'Repeat period (sec)', type: 'real', unit: 'time'},

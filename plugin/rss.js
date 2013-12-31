@@ -16,9 +16,7 @@ exports.plugin = {
         
 		start: function(netention) { 
             
-            netention.addTags([{
-                uri: 'web', name: 'Web'            
-            }]);
+
             
             netention.addTags([
                 {
@@ -36,7 +34,7 @@ exports.plugin = {
                         'rssItemURL': { name: 'RSS Item URL', type: 'url' }
                     }
                 }
-            ], [ 'web' ]);
+            ], [ 'Internet' ]);
             
             
             this.netention = netention;

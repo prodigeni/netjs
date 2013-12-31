@@ -712,7 +712,7 @@ exports.start = function(options, init) {
         res.sendfile('./client/index.html');
     });
     express.get('/client_configuration.js', function(req, res) {        
-        res.sendfile("./webserver.client.js");        
+        res.sendfile("./netention.client.js");        
     });
 
     // Accept the OpenID identifier and redirect the user to their OpenID

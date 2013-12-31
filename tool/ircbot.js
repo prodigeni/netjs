@@ -3,14 +3,14 @@
 var irc = require('irc');
 
 //https://github.com/kirsle/rivescript-js
-var RiveScript = require("../plugin/rivescript/rivescript/bin/RiveScript.js");
+
 
 var _= require('underscore');
 
 //000000000000000000000000000000000000000000000000000000000000
 
 var channel = '#netention';
-var username = 'undefined_';
+var username = 'netention_bot';
 
 var client = new irc.Client('irc.freenode.net', username, {
 		channels: [channel],
@@ -18,6 +18,7 @@ var client = new irc.Client('irc.freenode.net', username, {
 
 console.log('Connected to IRC.');
 
+var RiveScript = require("../plugin/rivescript/rivescript/bin/RiveScript.js");
 var bot = new RiveScript({ debug: false });
 bot.loadDirectory("./plugin/rivescript/rivescript/eg/brain", function() { 
 
@@ -25,7 +26,6 @@ bot.loadDirectory("./plugin/rivescript/rivescript/eg/brain", function() {
 	bot.ready = true;
 
 }, error_handler);
-
 console.log('Brain loaded.');
 
 // Listen for any message, say to him/her in the room

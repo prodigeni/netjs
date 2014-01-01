@@ -56,6 +56,47 @@ var tagAlias = {
     'ExpertTeacher': '+3σ'
 };
 
+var themes = {
+	//BASIC
+    "ui-lightness":'Bright',
+    "ui-darkness":'Dark',
+
+	//ORIGINAL
+    "_matrix-green":'Matrix (green)',
+    "_matrix-red":'Matrix (red)',
+    "_matrix-blue":'Matrix (blue)',
+    "_space": 'Space',
+    "_cybernetic": 'Cybernetic',
+    "_notebook": 'Notebook',
+    "_rainforest": 'Rainforest',
+    "_metamaps": 'MetaMaps',
+    "_scroogle": 'Google',
+    "_n$a": 'N$A',
+
+	//from ThemeRoller
+    "black-tie": 'Black Tie',
+    "blitzer": 'Blitzer',
+    "cupertino": 'Cupertino',
+    "dark-hive": 'Dark Hive',
+    "dot-luv": 'Dot Luv',
+    "excite-bike": 'Excite Bike',
+    "flick": 'Flick',
+    "hot-sneaks": 'Hot Sneaks',
+    "humanity": 'Humanity',
+    "le-frog": 'Le Frog',
+    "mint-choc": 'Mint Chocolate',
+    "overcast": 'Overcast',
+    "pepper-grinder": 'Pepper Grinder',
+    "redmond": 'Redmond',
+    "smoothness": 'Smoothness',
+    "south-street": 'South Street',
+    "start": 'Start',
+    "sunny": 'Sunny',
+    "swanky-purse": 'Swanky Purse',
+    "trontastic": 'Trontastic',
+    "vader": 'Vader'    
+};
+
 //var tagAlias = {
 //    'BeginnerStudent': 'α',
 //    'IntermediateStudent': 'β',

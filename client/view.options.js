@@ -1,40 +1,5 @@
 /* version 1.1 - 05-26-2013 */
 
-var themes = {
-    "ui-lightness":'Bright',
-    "ui-darkness":'Dark',
-    "_matrix-green":'Matrix (green)',
-    "_matrix-red":'Matrix (red)',
-    "_matrix-blue":'Matrix (blue)',
-    "_space": 'Space',
-    "_cybernetic": 'Cybernetic',
-    "_notebook": 'Notebook',
-    "_rainforest": 'Rainforest',
-    "_metamaps": 'MetaMaps',
-    "_scroogle": 'Google',
-    "_n$a": 'N$A',
-    "black-tie": 'Black Tie',
-    "blitzer": 'Blitzer',
-    "cupertino": 'Cupertino',
-    "dark-hive": 'Dark Hive',
-    "dot-luv": 'Dot Luv',
-    "excite-bike": 'Excite Bike',
-    "flick": 'Flick',
-    "hot-sneaks": 'Hot Sneaks',
-    "humanity": 'Humanity',
-    "le-frog": 'Le Frog',
-    "mint-choc": 'Mint Chocolate',
-    "overcast": 'Overcast',
-    "pepper-grinder": 'Pepper Grinder',
-    "redmond": 'Redmond',
-    "smoothness": 'Smoothness',
-    "south-street": 'South Street',
-    "start": 'Start',
-    "sunny": 'Sunny',
-    "swanky-purse": 'Swanky Purse',
-    "trontastic": 'Trontastic',
-    "vader": 'Vader'    
-};
 
 function renderOptions(s, o, v) {
    

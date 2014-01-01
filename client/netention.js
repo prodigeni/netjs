@@ -67,11 +67,12 @@ var refreshActionContext = _.throttle(function() {
 		_.each( ActionMenu, function(v, k) {
 			var menu = k;
 			var submenu = $('<li><a href="#">' + menu + '</a></li>');
-			var subcontents = $('<ul></ul>');
+			var subcontents = $('<ul style="width: 100%"></ul>');
 			submenu.append(subcontents);
 
 			_.each(v, function(vv) {
-				var a = $('<button>' + vv.name +'</button>');
+				var a = $('<a href="#">' + vv.name + '</a>');
+
 				if (vv.description)
 					a.attr('title', vv.description);
 
@@ -108,8 +109,7 @@ var refreshActionContext = _.throttle(function() {
 
 		u.menu();
 
-		u.append('<i>' + s.length + ' selected</i>');
-		u.append('<br/>');
+		u.append('<div style="float:right"><i>' + s.length + ' selected</i></div>');
 
 		$('#ActionMenuWrapper').append(u);
 	});

@@ -43,17 +43,26 @@ addAction({	menu: 'Object',	name: 'Encrypt...' });
 addAction({	menu: 'Object',	name: 'Decrypt...' });
 addAction({	menu: 'Object',	name: 'Delete' });
 
-addAction({	menu: 'Space',	name: 'Route Directions...', description: 'Route shortest paths to one or more destinations',
-	accepts: function(s) {
-		for (var i = 0; i < s.length; i++) {
-			var p = s[i];
-			console.log('is space: ' + objGeographic(p));
-			if (!objGeographic(p))
-				return false;
-		}
-		return true;
-	}
+var allAreSpatial = function(s) {
+	for (var i = 0; i < s.length; i++)
+		if (!objGeographic(s[i]))
+			return false;
+	return true;
+};
+addAction({	menu: 'Space',	name: 'Route Directions...', 
+	description: 'Route shortest paths to one or more destinations',
+	accepts: allAreSpatial
 });
+addAction({	menu: 'Space',	name: 'Find Nearby...', 
+	description: 'Find nearby objects of certain types within a given range',
+	accepts: allAreSpatial
+});
+
+addAction({	menu: 'Text',	name: 'Change Case', description: 'UPPERCASE, lowercase, RaNDoMCaSE, & more' });
+addAction({	menu: 'Text',	name: 'Separate per line' });
+addAction({	menu: 'Text',	name: 'Separate per paragraph' });
+addAction({	menu: 'Text',	name: 'Translate' });
+addAction({	menu: 'Text',	name: 'Mutate' }); //hackertext, add spelling mistakes
 
 
 

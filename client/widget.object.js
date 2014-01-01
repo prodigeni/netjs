@@ -1228,8 +1228,8 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
 			x = objAddTag(x, 'Favorite');
 		}
 		else {
-			$.pnotify('Removed favorite.');
 			var n = ot.indexOf('Favorite');
+			$.pnotify('Removed favorite.', 'At index ' + n);
 			x = objRemoveValue(x, n);
 		}
 

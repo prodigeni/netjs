@@ -12,23 +12,15 @@ var ID_UNKNOWN = 0;
 var ID_ANONYMOUS = 1;
 var ID_AUTHENTICATED = 2;
 
-var ExampleAction = {
-	menu: 'Object',
-	name: 'Example Action',
-	accepts: function(selection) {
-		return false;
-	},
-	run: function(selection) {
-		return "Example action completed."
-	}
-};
-
 var Actions = [];
 var ActionMenu = { };
 function addAction(a) {
-	if (!a.menu) 	{ 		console.error('addAction missing menu: ' + a); 	return; 	}
+	if (!a.menu) 	//{ 		console.error('addAction missing menu: ' + a); 	return; 	}
+		a.menu = 'Other';
 	if (!a.name) 	{ 		console.error('addAction missing name: ' + a); 	return; 	}
-	if (!a.accepts) { 		console.error('addAction missing accepts: ' + a); 	return; 	}
+	if (!a.accepts) //{ 		console.error('addAction missing accepts: ' + a); 	return; 	}
+		a.accepts = function() { return false; }
+
 	Actions.push(a);
 	if (!ActionMenu[a.menu])
 		ActionMenu[a.menu] = [];
@@ -42,7 +34,12 @@ var refreshActionContext = _.throttle(function() {
 		//get selected items from .ObjectSelection
 		$('.ObjectSelection:checked').each(function( index ) {
 			var x = $( this );
-			s.push( x.attr('oid') );
+			var aoid = x.attr('oid');
+			if (aoid) {
+				var o = self.getObject(aoid);
+				if (o)
+					s.push( o );
+			}
 		});
 
 		//jquery menu - http://jqueryui.com/menu/#default
@@ -60,8 +57,6 @@ var refreshActionContext = _.throttle(function() {
 		if (s.length == 0)
 			return;
 
-		$('#ActionMenuWrapper').append(s.length + ' selected');
-		$('#ActionMenuWrapper').append('<br/>');
 
 
 		var u = $('<ul id="ActionMenu"></ul>');
@@ -77,6 +72,8 @@ var refreshActionContext = _.throttle(function() {
 
 			_.each(v, function(vv) {
 				var a = $('<button>' + vv.name +'</button>');
+				if (vv.description)
+					a.attr('title', vv.description);
 
 				var accepts = vv.accepts(s);
 
@@ -110,6 +107,9 @@ var refreshActionContext = _.throttle(function() {
 		});
 
 		u.menu();
+
+		u.append('<i>' + s.length + ' selected</i>');
+		u.append('<br/>');
 
 		$('#ActionMenuWrapper').append(u);
 	});

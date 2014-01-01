@@ -711,7 +711,8 @@ exports.start = function(options, init) {
 		    //res.redirect('/');  
 	        res.sendfile('./client/index.html');
 		}
-		res.send('Anonymous disabled');
+		else
+			res.send('Anonymous disabled');
         
     });
     express.get('/client_configuration.js', function(req, res) {        

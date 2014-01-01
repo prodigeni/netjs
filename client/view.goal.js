@@ -212,10 +212,16 @@ function renderGoal(v) {
 			currentGoalHeader.append('<button disabled title="Clear">[x]</button>');
 
 			var userSelect = $('<select></select>');
-			userSelect.append('<option>My (' + self.myself().name + ')</option>');
+			if (self.myself())
+				userSelect.append('<option>My (' + self.myself().name + ')</option>');
 			userSelect.append('<option>Everyone\'s</option>');
-			userSelect.append('<option>User1</option>');
-			userSelect.append('<option>User2</option>');
+
+			var users = self.objectsWithTag('User');
+			_.each(users, function(uid) {
+				var u = self.getObject(uid);
+				if (u)
+					userSelect.append('<option oid="' + u + '">' + u.name + '</option>');
+			});
 			currentGoalHeader.prepend(userSelect);
 
 			var now = self.getGoals(null);

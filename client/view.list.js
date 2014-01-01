@@ -427,8 +427,8 @@ function renderList(s, o, v) {
 
 	submenu.append(slideControls);
 
-	var actionMenu = $('<div id="ActionMenuWrapper"></div>');
-	submenu.append(actionMenu);
+	//var actionMenu = $('');
+	//submenu.append(actionMenu);
 
 	function update() {
 		v.html('');

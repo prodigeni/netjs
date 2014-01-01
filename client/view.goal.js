@@ -202,14 +202,21 @@ function renderGoal(v) {
 			sidebar.empty();
 
 			//sidebar.html(newProtogoalMenu());	
-			sidebar.append('NOW');
+			var currentGoalHeader = $('<div id="GoalHeader">Goals</div>');
+			sidebar.append(currentGoalHeader);
 
 
 			var addbutton = $('<button title="Add Tag">[+]</button>');
-			sidebar.append(addbutton);
-			sidebar.append('<button title="Set Focus To This Goal">Focus</button>')
-			sidebar.append('<button title="Clear">[x]</button>');
-			sidebar.append('<hr/>');
+			currentGoalHeader.append(addbutton);
+			currentGoalHeader.append('<button disabled title="Set Focus To This Goal">Focus</button>')
+			currentGoalHeader.append('<button disabled title="Clear">[x]</button>');
+
+			var userSelect = $('<select></select>');
+			userSelect.append('<option>My (' + self.myself().name + ')</option>');
+			userSelect.append('<option>Everyone\'s</option>');
+			userSelect.append('<option>User1</option>');
+			userSelect.append('<option>User2</option>');
+			currentGoalHeader.prepend(userSelect);
 
 			var now = self.getGoals(null);
 			_.each(now, function(g) {
@@ -217,7 +224,7 @@ function renderGoal(v) {
 			});
 
 			addbutton.click(function() {
-				var d = newPopup("Select Tags for NOW", {width: 800, height: 600, modal: true});
+				var d = newPopup("Add a Goal", {width: 800, height: 600, modal: true});
 		        d.append(newTagger([], function(results) {
 					saveGoalTags(results);
 
@@ -266,7 +273,7 @@ function renderGoal(v) {
 				var tti = ti;
 				var tts = ts;
 				addbutton.click(function() {
-					var d = newPopup("Select Tags for " + tts, {width: 800, height: 600, modal: true});
+					var d = newPopup("Add a Goal at " + tts, {width: 800, height: 600, modal: true});
 				    d.append(newTagger([], function(results) {
 						saveGoalTags(results, tti+timeUnitLengthMS/2);
 

@@ -67,7 +67,7 @@ var refreshActionContext = _.throttle(function() {
 		_.each( ActionMenu, function(v, k) {
 			var menu = k;
 			var submenu = $('<li><a href="#">' + menu + '</a></li>');
-			var subcontents = $('<ul style="width: 100%"></ul>');
+			var subcontents = $('<ul style="width: 80%"></ul>');
 			submenu.append(subcontents);
 
 			_.each(v, function(vv) {
@@ -109,7 +109,22 @@ var refreshActionContext = _.throttle(function() {
 
 		u.menu();
 
-		u.append('<div style="float:right"><i>' + s.length + ' selected</i></div>');
+		var selectedLabel = $('<div style="float:right"><i>' + s.length + ' selected. </i></div>');
+
+		var clearButton = $('<button>Clear</button>');
+		clearButton.click(function() {
+			later(function() {
+				$('.ObjectSelection:checked').each(function( index ) {
+					var x = $( this );
+					x.prop('checked', false);				
+				});
+				refreshActionContext();
+			});
+		});
+		selectedLabel.append(clearButton);
+
+		u.append(selectedLabel);
+
 
 		$('#ActionMenuWrapper').append(u);
 	});

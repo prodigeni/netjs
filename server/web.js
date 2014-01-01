@@ -704,12 +704,15 @@ exports.start = function(options, init) {
     ));
         
     express.get('/anonymous', function(req,res) {
-        res.cookie('authenticated', 'anonymous');
-        res.cookie('clientID', '');
-        req.session.cookie.expires = false;
-        //res.redirect('/');  
+		if (options.permissions.enableAnonymous) {			
+		    res.cookie('authenticated', 'anonymous');
+		    res.cookie('clientID', '');
+		    req.session.cookie.expires = false;
+		    //res.redirect('/');  
+	        res.sendfile('./client/index.html');
+		}
+		res.send('Anonymous disabled');
         
-        res.sendfile('./client/index.html');
     });
     express.get('/client_configuration.js', function(req, res) {        
 		var configFile = 'netention.client.js';

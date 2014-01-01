@@ -54,7 +54,7 @@ exports.plugin = {
 			var that = this;
 			this.irc.addListener("message", function(from, to, text, message) {
 				var m = util.objNew();
-				m.name(to + ', ' + from + ': ' + text);
+				m.setName(to + ', ' + from + ': ' + text);
 				netention.pub(m);
 
 				//	if (to === channel)
@@ -66,7 +66,7 @@ exports.plugin = {
 
 					//save response as a reply
 					var n = util.objNew();
-					n.name(reply);
+					n.setName(reply);
 					n.replyTo = [ m.id ];
 					netention.pub(n);
 

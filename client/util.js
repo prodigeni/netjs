@@ -34,7 +34,7 @@ function objNew(id, name) {
         x.name = name;
         
 	//TODO build convenient & friendly object API here
-	x.name = function(n) {
+	x.setName = function(n) {
 		objName(x, n);
 		return x;
 	};

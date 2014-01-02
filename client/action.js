@@ -12,12 +12,50 @@ var ExampleAction = {
 };
 */
 
+function getMultiLine(title, value, ifEntered, ifNotEntered) {
+	var d = newDiv();
+	$('body').append(d);
+
+	var textarea = $('<textarea style="width: 95%; height: 75%;"></textarea>');
+
+	if (value)
+		textarea.append(value);
+
+	d.append(textarea);
+
+    d.dialog({
+      autoOpen: false,
+      height: 300,
+      width: 350,
+      modal: true,
+	  title: title,
+      buttons: {
+        "OK": function() {
+			var text = textarea.val();
+			ifEntered(text);
+            $( this ).dialog( "close" );
+        },
+        Cancel: function() {
+			if (ifNotEntered)
+				ifNotEntered();
+		    $( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+			d.remove();
+      }
+    });
+	d.dialog("open");	
+}
+
+var selectionOfOne = function(s) {
+	return (s.length == 1);
+};
+
 addAction({
 	menu: 'Object',
 	name: 'Clone',
-	accepts: function(s) {
-		return (s.length == 1);
-	},
+	accepts: selectionOfOne,
 	run: function(selection) {
 		var x = selection[0];
 
@@ -41,6 +79,14 @@ addAction({	menu: 'Object',	name: 'Anonymize' });
 addAction({	menu: 'Object',	name: 'Touch' });
 addAction({	menu: 'Object',	name: 'Encrypt...' });
 addAction({	menu: 'Object',	name: 'Decrypt...' });
+addAction({	menu: 'Object',	name: 'View Source', description: 'Display object\'s JSON source',
+	accepts: selectionOfOne,
+	run: function(selection) {
+		var x = selection[0];
+		$.pnotify({ title: x.id, text: JSON.stringify(x, null, 4) } );
+		return null;
+	}	
+});
 addAction({	menu: 'Object',	name: 'Delete' });
 
 var allAreSpatial = function(s) {
@@ -71,13 +117,35 @@ addAction({	menu: 'Tag',	name: 'Remove All Tags' });
 addAction({	menu: 'Tag',	name: 'Add SuperCategories...' });
 
 addAction({	menu: 'Meaning',	name: 'Auto-Tag...' });
-addAction({	menu: 'Meaning',	name: 'Identify Entities', description: 'NLP entity extraction to identify mentioned entities' });
+addAction({	menu: 'Meaning',	name: 'Identify Entities', description: 'NLP "who, what, where, when, ..." entity extraction to identify mentioned entities' });
 
 addAction({	menu: 'Analyze',	name: 'Compare Tags', description: 'Tags shared, differences, and other analyse' });
 addAction({	menu: 'Analyze',	name: 'Create Timeline...' });
 addAction({	menu: 'Analyze',	name: 'Cost / Benefit Report', description: 'Cost calculated from a multi-currency value network. Benefits calculated with regard to human needs satisfied' });
+addAction({	menu: 'Analyze',	name: 'Solve...', description: 'Solve a problem by cause-effect chain...' });
+addAction({	menu: 'Analyze',	name: 'Realize...', description: 'Find potential REAL matches for realizing an IMAGINARY object' });
 
 //Visual (applies if content contains “<img src”)
+addAction({	menu: 'Visual',	name: 'Apply CSS Style...' , 
+	accepts: function(s) {
+		return (s.length > 0);
+	},
+	run: function(selection) {
+		var existingStyle = null;
+		if (selection.length == 1) {
+			existingStyle = selection[0].style;
+		}
+		getMultiLine('Apply CSS Style', existingStyle, function(style) {
+			_.each(selection, function(s) {
+				s.style = style;
+				self.publish(s);
+			});
+		});
+		
+		return "Styles applied.";
+	}
+
+});
 addAction({	menu: 'Visual',	name: 'Create Raptcha...' });
 addAction({	menu: 'Visual',	name: 'Recognize Characters', description: 'OCR an image to get the visible text' });
 addAction({	menu: 'Visual',	name: 'Add from Image Search...' });
@@ -100,4 +168,3 @@ addAction({	menu: 'Share',	name: 'To Printer' });
 addAction({	menu: 'Share',	name: 'To G+' });
 addAction({	menu: 'Share',	name: 'To FaceBook' });
 addAction({	menu: 'Share',	name: 'To Craigslist' });
-

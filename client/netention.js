@@ -83,11 +83,12 @@ var refreshActionContext = _.throttle(function() {
 						if (vv.run) {
 							later(function() {
 								var result = vv.run(s);
-								$.pnotify(result);
+								if (result)
+									$.pnotify(result);
 							});
 						}
 						else {
-							$.pnotify(vv.name + ' support not ready yet.');
+							$.pnotify('"' + vv.name + '" not ready yet.');
 						}					
 					}
 				}

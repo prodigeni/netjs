@@ -1182,7 +1182,8 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
     
 
     var d = $('<div class="objectView ui-widget-content ui-corner-all">');
-	d.attr('style', "font-size:" + ((r) ? ( (0.5 + r)*100.0 + '%') : ("100%") ));
+	var oStyle = x.style;
+	d.attr('style', "font-size:" + ((r) ? ( (0.5 + r)*100.0 + '%') : ("100%") ) + (oStyle ? '; ' + oStyle : '') );
 	
     var xn = x.name;
     var authorID = x.author;

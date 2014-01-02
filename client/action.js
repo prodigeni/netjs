@@ -48,10 +48,19 @@ function getMultiLine(title, value, ifEntered, ifNotEntered) {
 	d.dialog("open");	
 }
 
-var selectionOfOne = function(s) {
-	return (s.length == 1);
-};
+var selectionOfOne = function(s) { 	return (s.length == 1); };
 
+addAction({
+	menu: 'Object',
+	name: 'Edit...',
+	accepts: selectionOfOne,
+	run: function(selection) {
+		var x = selection[0];
+		var oid = x.id;
+        var e = newPopup("Edit " + oid);
+        e.append(newObjectEdit(x, true));
+	}
+});
 addAction({
 	menu: 'Object',
 	name: 'Clone',
@@ -69,6 +78,7 @@ addAction({
 		return "Cloned to " + y.id;
 	}
 });
+
 addAction({
 	menu: 'Object',
 	name: 'Merge',
@@ -124,6 +134,8 @@ addAction({	menu: 'Analyze',	name: 'Create Timeline...' });
 addAction({	menu: 'Analyze',	name: 'Cost / Benefit Report', description: 'Cost calculated from a multi-currency value network. Benefits calculated with regard to human needs satisfied' });
 addAction({	menu: 'Analyze',	name: 'Solve...', description: 'Solve a problem by cause-effect chain...' });
 addAction({	menu: 'Analyze',	name: 'Realize...', description: 'Find potential REAL matches for realizing an IMAGINARY object' });
+addAction({	menu: 'Analyze',	name: 'Data Neighborhood...', description: 'The local subgraph centered around the selected objects...' });
+	//display “neighborhood” relationships table/graph (with ‘add’ button for forming new relationships, as additional object properties)
 
 //Visual (applies if content contains “<img src”)
 addAction({	menu: 'Visual',	name: 'Apply CSS Style...' , 
@@ -168,3 +180,38 @@ addAction({	menu: 'Share',	name: 'To Printer' });
 addAction({	menu: 'Share',	name: 'To G+' });
 addAction({	menu: 'Share',	name: 'To FaceBook' });
 addAction({	menu: 'Share',	name: 'To Craigslist' });
+
+/*
+object action buttons for implementing object actions via a set of client plugins:
+run/execute
+embedded script (output is displayed into target innerHTML or popup dialog)
+embedded css
+private/public toggle
+delete
+reply
+export
+COPY (selection)
+LINK / GROUP (selection)
+CLONE
+MERGE (status notification dsplays selected objects), PASTE MERGE, NEW MERGE (status notification display undo)
+bookmark presets, alternate focus modes
+vary
+split
+sentence
+word
+paragraph
+[other noticeable differentiation, by image, ex:]
+imagine/real toggle
+sentencize
+speak text
+speak metadata
+maximize
+visit link (open new browser tab)
+client plugin interface for others: 
+parameters displayed whether editable or not
+icon
+action function
+popup menu function (returns displayed popup menu, or null)
+enabled
+plugin metadata
+*/

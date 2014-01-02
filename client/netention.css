@@ -1133,6 +1133,7 @@ a.openModal:focus {
 	position: fixed;
 	z-index: 10;
 	bottom: 0;
+	right: 0;
 	width: 30%;
 }
 #GoalHeader {

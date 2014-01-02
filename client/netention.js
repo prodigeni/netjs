@@ -868,7 +868,10 @@ function newPopup(title,p) {
     
     $('body').append(d);
 	p = _.extend(p||{ }, {
-		maxHeight: parseInt(0.75 * clientHeight)
+		maxHeight: parseInt(0.75 * clientHeight),
+		close: function() {
+			d.remove();
+		}
 	});
     d.dialog(p);
     return d;    

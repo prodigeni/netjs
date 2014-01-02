@@ -56,6 +56,7 @@ function _updateView(force) {
 
     lastView = view;
 
+	v.css('font-size', '100%');
     v.removeClass('ui-widget-content');
     v.removeClass('view-indented');
     v.removeClass('overthrow');

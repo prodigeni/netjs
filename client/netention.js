@@ -268,7 +268,7 @@ function netention(f) {
             //->tag
             getTag : function(t) { return this.tags()[t]; },
             getProperty : function(p) { return this.properties()[p]; },
-            
+                        
             getIncidentTags : function(userid, oneOfTags) {
                 
                 return objIncidentTags(this.objects(), oneOfTags, userid);

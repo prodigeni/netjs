@@ -1,4 +1,7 @@
-//https://github.com/nodejitsu/node-http-proxy
+/*
+ *  Script for running a proxy server, for serving many virtual host Netention instances from the same server.
+ *  see: https://github.com/nodejitsu/node-http-proxy
+ */
 
 var http = require('http'),
     httpProxy = require('http-proxy');

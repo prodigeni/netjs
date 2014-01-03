@@ -88,4 +88,3 @@ function startTalk() {
 	TogetherJS(this);
 
 }
-

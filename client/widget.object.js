@@ -51,6 +51,7 @@ function getAvatar(s) {
     var emailHash = MD5(e);
     return $("<img>").attr("src","http://www.gravatar.com/avatar/" + emailHash);
 }
+
 function getAvatarURL(email) {
     if (!email) {
         return configuration.defaultAvatarIcon;
@@ -211,10 +212,37 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
 
 
         if (x.value) {
+            var tags = []; //tags & properties, actually
+            
             for (var i = 0; i < x.value.length; i++) {
                 var t = x.value[i];
-                var tt = renderTagSection(x, i, t, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange);
+                tags.push(t.id);
+                var tt = newTagSection(x, i, t, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange);
                 d.append(tt); 
+            }
+
+            var missingProp = [];
+            //Add missing required properties, min: >=1 (with their default values) of known objects:
+            for (var i = 0; i < tags.length; i++) {
+                var t = tags[i];
+                t = self.getTag(t);
+                if (!t) continue;
+                var prop = t.properties;
+                if (!prop) continue;
+                var propVal = _.map(prop, function(pid) { return self.getProperty(pid);} )                
+                for (var j = 0; j < prop.length; j++) {
+                    if (propVal[j].min)
+                        if (propVal[j].min > 0)
+                            if (!_.contains(tags, prop[j]))
+                                missingProp.push(prop[j]);
+                }
+            }
+            
+            for (var i = 0; i < missingProp.length; i++) {
+                var p = missingProp[i];
+                console.log(p);
+                var tt = newTagSection(x, i+x.value.length, { id: p }, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange);
+                d.append(tt);                 
             }
         }
 
@@ -561,7 +589,7 @@ function applyTagStrengthClass(e, s) {
 }
 
 
-function renderTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange) {
+function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange) {
     var tag = t.id;
     var strength = t.strength;
     
@@ -646,18 +674,28 @@ function renderTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onS
         //tagLabel.hide();    
         type = tag;
     }
-    if (self.properties()[tag]!=undefined) {
-        var prop = self.properties()[tag];
+    
+    var prop = self.getProperty(tag);
+    var defaultValue = null;
+    if (prop) {
         type = prop.type;
         tagLabel.html( prop.name );
+        
+        if (prop.default) {
+            defaultValue = prop.default;
+        }
     }
         
     if (type == 'textarea') {        
         
         if (editable) {
             var dd = $('<textarea/>').addClass('tagDescription');
+            
             if (t.value)
                 dd.val(t.value);
+            else if (defaultValue)
+                dd.val(defaultValue);
+
             d.append(dd);
             
             whenSaved.push(function(y) {
@@ -681,7 +719,9 @@ function renderTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onS
 
             if (t.value)
                 dd.val(t.value);
-			//d.append('<br/>');
+            else if (defaultValue)
+                dd.val(defaultValue);
+            
             d.append(dd);
             
             whenSaved.push(function(y) {
@@ -710,14 +750,19 @@ function renderTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onS
         
     }
     else if (type == 'boolean') {
-		var t = $('<input type="checkbox">');
+	var t = $('<input type="checkbox">');
 		
         var value = t.value;
-		if (!value)
-			value = true;
+	if (!value) {
+            if (defaultValue)
+                value = defaultValue;
+            else
+		value = true;
+        }
+            
 		
-		t.attr('checked', value ? 'on' : undefined);
-		d.append(t);
+        t.attr('checked', value ? 'on' : undefined);
+        d.append(t);
         
         if (editable) {
             whenSaved.push(function(y) {
@@ -827,11 +872,11 @@ function renderTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onS
 			});
 		});
 	}
-    else if (type == 'timerange') {
+        else if (type == 'timerange') {
 		var nn = Date.now();
 		var oldest = nn - 5 * 24 * 60 * 60 * 1000; //TODO make this configurable
 
-        if (editable) {
+             if (editable) {
 
 			var i = $('<input type="range" name="timecenter" min="1" max="10000">');
 
@@ -1048,7 +1093,7 @@ function renderTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onS
                     var vv = t.value[v];
                     var pv = self.getProperty(vv.id);
                     //var pe = newPropertyEdit(vv, pv);
-                    var pe = renderTagSection(t, v, vv, editable);
+                    var pe = newTagSection(t, v, vv, editable);
                     //this.propertyEdits.push(pe);
                     d.append(pe);
                 }

@@ -235,11 +235,11 @@ var generalTags = [
 
 exports.plugin = {
     	name: 'General',	
-		description: 'General Tags',
-		options: { },
+	description: 'General Tags',
+	options: { },
         version: '1.0',
         author: 'http://netention.org',
-		start: function(netention, util) { 
+	start: function(netention, util) { 
             netention.addTags( generalTags );
 			
 			function indexPDF(name, path) {
@@ -253,5 +253,5 @@ exports.plugin = {
 			//indexPDF('Netention Theory', 'doc/seh_netention_intro.pdf');
 
         },
-		stop: function(netention) { }
+	stop: function(netention) { }
 };

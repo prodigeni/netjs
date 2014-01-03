@@ -83,6 +83,7 @@ addAction({
 	menu: 'Object',
 	name: 'Merge',
 	description: 'Create a new object containing the content of all those selected',
+	options:  [ ['Union', 'Intersection'] ],
 	accepts: function(s) { return (s.length > 1); 	}
 });
 addAction({	menu: 'Object',	name: 'Anonymize' });
@@ -172,6 +173,7 @@ addAction({	menu: 'Audio',	name: 'Add from Sound Search...' });
 
 addAction({	menu: 'Share',	name: 'To TeleHash' });
 addAction({	menu: 'Share',	name: 'To Twitter' });
+	//Twitter share: https://dev.twitter.com/docs/tweet-button#properties
 addAction({	menu: 'Share',	name: 'To E-Mail' });
 addAction({	menu: 'Share',	name: 'To Blog' });
 addAction({	menu: 'Share',	name: 'To Forum' });

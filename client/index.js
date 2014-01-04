@@ -70,7 +70,7 @@ function _updateView(force) {
         v.addClass('overthrow ui-widget-content view-indented');
     }
 
-    if (view === 'list') {
+    if (view === 'browse') {
         indent();
         currentView = renderList(s, o, v);
     }

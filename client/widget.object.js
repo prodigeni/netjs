@@ -601,6 +601,11 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
     var strength = t.strength;
 
     var d = newDiv().addClass('tagSection');
+    d.hover( function() {
+        d.addClass('tagSectionHovered');
+    }, function() {
+        d.removeClass('tagSectionHovered');
+    } );
 
     if (strength == undefined)
         strength = 1.0;
@@ -630,7 +635,35 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
             });
             tagButtons.append(downButton);
         }
-
+        
+        {
+            var disableButton = $('<button title="Disable">&nbsp;</button>');
+            tagButtons.append(disableButton);
+            var p25Button = $('<button title="25%">&nbsp;</button>');
+            tagButtons.append(p25Button);
+            var p50Button = $('<button title="50%">&nbsp;</button>');
+            tagButtons.append(p50Button);
+            var p75Button = $('<button title="75%">&nbsp;</button>');
+            tagButtons.append(p75Button);
+            var p100Button = $('<button title="100%">&nbsp;</button>');
+            tagButtons.append(p100Button);
+            
+            var currentButton = null;
+            if (strength == 0) currentButton = disableButton;
+            if (strength == 1.0) currentButton = p100Button;
+            if (strength == 0.75) currentButton = p75Button;
+            if (strength == 0.5) currentButton = p50Button;
+            if (strength == 0.25) currentButton = p25Button;
+            if (currentButton)
+                currentButton.addClass('tagButtonSelected');
+            
+            disableButton.click(function() { onStrengthChange(index, 0); });
+            p25Button.click(function() { onStrengthChange(index, 0.25); });
+            p50Button.click(function() { onStrengthChange(index, 0.5); });
+            p75Button.click(function() { onStrengthChange(index, 0.75); });
+            p100Button.click(function() { onStrengthChange(index, 1.0); });
+        }
+        /*
         if (strength > 0.25) {
             var weakenButton = $('<a href="#" title="Decrease">-</a>');
             weakenButton.addClass('tagButton');
@@ -657,7 +690,7 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
             tagButtons.append(disableButton);
         }
         else {
-        }
+        }*/
 
         var removeButton = $('<a href="#" title="Remove">X</a>');
         removeButton.addClass('tagButton');

@@ -3,7 +3,7 @@ var ONTO_SEARCH_PERIOD_MS = 500; //TODO move this to client.js
 
 //t is either a tag ID, or an object with zero or more tags
 function getTagIcon(t) {
-    
+
     if (t.id) {
         //try all the tags, return the first
         if (t.value) {
@@ -21,25 +21,25 @@ function getTagIcon(t) {
         return defaultIcons[t];
     }
 }
-    
+
 
 
 function newPopupObjectView(_x) {
     var x;
-    if (typeof(_x) == "string") 
+    if (typeof (_x) == "string")
         x = self.getObject(_x);
     else
-        x = _x;    
-    
+        x = _x;
+
     if (!x) {
         console.log('Unknown object: ' + _x);
         return;
     }
-    
+
     var d = newPopup(x.name);
     d.append(newObjectSummary(x, null, 1.0, 4));
     return d;
-    
+
 }
 
 
@@ -47,9 +47,9 @@ function getAvatar(s) {
     var e = '';
     if (s)
         if (s.email)
-             e = s.email;
+            e = s.email;
     var emailHash = MD5(e);
-    return $("<img>").attr("src","http://www.gravatar.com/avatar/" + emailHash);
+    return $("<img>").attr("src", "http://www.gravatar.com/avatar/" + emailHash);
 }
 
 function getAvatarURL(email) {
@@ -64,37 +64,37 @@ function newTagButton(t) {
 
     if (!t.uri) {
         var tagObject = self.getTag(t);
-        if (tagObject)        
+        if (tagObject)
             t = tagObject;
     }
     if (t.uri) {
         ti = getTagIcon(t.uri);
     }
-    
+
     var i = null;
-    if (ti!=null) {
-        i = $(document.createElement('img')).attr('src', ti).attr('class','TagButtonIcon');
+    if (ti != null) {
+        i = $(document.createElement('img')).attr('src', ti).attr('class', 'TagButtonIcon');
     }
 
     var b = $(document.createElement('a')).attr('href', '#');
     if (i)
         b.append(i);
-    
+
     if (t.name)
         b.append(t.name);
     else
         b.append(t);
-    
-	function tagObject(tag) {
-		var o = objNew();
-		o.name = tag.name;
-		o = objAddDescription(o, tag.uri + ' [tag]');
-		return o;
-	}
 
-	b.click(function() {
-		newPopupObjectView(tagObject(t));
-	});
+    function tagObject(tag) {
+        var o = objNew();
+        o.name = tag.name;
+        o = objAddDescription(o, tag.uri + ' [tag]');
+        return o;
+    }
+
+    b.click(function() {
+        newPopupObjectView(tagObject(t));
+    });
 
     return b;
 }
@@ -102,13 +102,13 @@ function newTagButton(t) {
 function newReplyWidget(onReply, onCancel) {
     var w = newDiv();
     w.addClass('ReplyWidget');
-    
+
     var ta = $('<textarea/>');
     w.append(ta);
-    
+
     var bw = $('<div style="text-align: left"></div>');
     w.append(bw);
-    
+
     var c = $('<button>Cancel</button>');
     c.click(function() {
         var ok;
@@ -118,12 +118,12 @@ function newReplyWidget(onReply, onCancel) {
         else {
             ok = true;
         }
-        
-        if (ok)            
+
+        if (ok)
             onCancel();
     });
     bw.append(c);
-    
+
     var b = $('<button>Reply</button>');
     b.click(function() {
         if (ta.val() != "") {
@@ -131,7 +131,7 @@ function newReplyWidget(onReply, onCancel) {
         }
     });
     bw.append(b);
-    
+
     return w;
 }
 
@@ -142,18 +142,18 @@ function newReplyWidget(onReply, onCancel) {
 function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange) {
     var d = newDiv();
 
-    
+
     function update(x) {
         var whenSaved = [];
         var nameInput = null;
 
         function getEditedFocus() {
             if (!editable)
-                return x;     
-            
+                return x;
+
             var na = nameInput ? nameInput.val() : "";
-            
-            var n = objNew( x.id, na );
+
+            var n = objNew(x.id, na);
             n.createdAt = x.createdAt;
             n.author = x.author;
             for (var i = 0; i < whenSaved.length; i++) {
@@ -163,45 +163,45 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
             return n;
         }
 
-        var onAdd = function(tag, value) {                    
+        var onAdd = function(tag, value) {
             update(objAddValue(getEditedFocus(), tag, value));
         };
-        var onRemove = function(i) {                                
-	   	    var rr = objRemoveValue( getEditedFocus(), i);
-			if (onTagRemove)
-				onTagRemove(rr);
-	        update(rr);
+        var onRemove = function(i) {
+            var rr = objRemoveValue(getEditedFocus(), i);
+            if (onTagRemove)
+                onTagRemove(rr);
+            update(rr);
         };
-        var onStrengthChange = function(i, newStrength) {        
+        var onStrengthChange = function(i, newStrength) {
             var y = getEditedFocus();
-			if (!y.value)
-				y.value = [ ];
+            if (!y.value)
+                y.value = [];
 
-			if (!y.value[i])
-				y.value[i] = { };
-   	        y.value[i].strength = newStrength;
-			if (whenSliderChange)
-				whenSliderChange(y);
+            if (!y.value[i])
+                y.value[i] = {};
+            y.value[i].strength = newStrength;
+            if (whenSliderChange)
+                whenSliderChange(y);
             update(y);
         };
-        var onOrderChange = function(fromIndex, toIndex) {        
+        var onOrderChange = function(fromIndex, toIndex) {
             //http://stackoverflow.com/questions/5306680/move-an-array-element-from-one-array-position-to-another
             var y = getEditedFocus();
             y.value.splice(toIndex, 0, y.value.splice(fromIndex, 1)[0]);
             update(y);
         };
 
-        
+
         d.html('');
-        
+
         if (editable) {
-            if (hideWidgets!=true) {
+            if (hideWidgets != true) {
                 nameInput = $('<input/>').attr('type', 'text').attr('x-webkit-speech', 'x-webkit-speech').addClass('nameInput');
                 nameInput.val(objName(x));
                 d.append(nameInput);
 
                 whenSaved.push(function(y) {
-                   objName(y, nameInput.val());
+                    objName(y, nameInput.val());
                 });
             }
         }
@@ -213,12 +213,12 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
 
         if (x.value) {
             var tags = []; //tags & properties, actually
-            
+
             for (var i = 0; i < x.value.length; i++) {
                 var t = x.value[i];
                 tags.push(t.id);
                 var tt = newTagSection(x, i, t, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange);
-                d.append(tt); 
+                d.append(tt);
             }
 
             var missingProp = [];
@@ -226,10 +226,14 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
             for (var i = 0; i < tags.length; i++) {
                 var t = tags[i];
                 t = self.getTag(t);
-                if (!t) continue;
+                if (!t)
+                    continue;
                 var prop = t.properties;
-                if (!prop) continue;
-                var propVal = _.map(prop, function(pid) { return self.getProperty(pid);} )                
+                if (!prop)
+                    continue;
+                var propVal = _.map(prop, function(pid) {
+                    return self.getProperty(pid);
+                })
                 for (var j = 0; j < prop.length; j++) {
                     if (propVal[j].min)
                         if (propVal[j].min > 0)
@@ -237,47 +241,45 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
                                 missingProp.push(prop[j]);
                 }
             }
-            
+
             for (var i = 0; i < missingProp.length; i++) {
                 var p = missingProp[i];
-                console.log(p);
-                var tt = newTagSection(x, i+x.value.length, { id: p }, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange);
-                d.append(tt);                 
+                d.append(newTagSection(x, i + x.value.length, {id: p}, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange));
             }
         }
 
         var ts = $('<ul/>');
 
-        d.append( ts.addClass('tagSuggestions') );
+        d.append(ts.addClass('tagSuggestions'));
 
         var ontoSearcher;
 
         var lastValue = null;
-        function search() {   
+        function search() {
             if (!ts.is(':visible')) {
                 //clearInterval(ontoSearcher);
                 return;
             }
             if (!d.is(':visible')) {
                 clearInterval(ontoSearcher);
-                return;            
+                return;
             }
 
             //skip suggestions when editing a Tag
             if (objHasTag(getEditedFocus(), 'Tag')) {
-                ts.html('');    
+                ts.html('');
             }
             else {
                 var v = nameInput.val();
-                if (lastValue!=v) {
+                if (lastValue != v) {
                     updateTagSuggestions(v, ts, onAdd, getEditedFocus);
                 }
                 lastValue = v;
             }
 
         }
-        
-        if (hideWidgets!=true) {
+
+        if (hideWidgets != true) {
             if (editable)
                 ontoSearcher = setInterval(search, ONTO_SEARCH_PERIOD_MS);
         }
@@ -285,73 +287,73 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
         d.getEditedFocus = getEditedFocus;
 
 
-            //$('#FocusEdit button').button();       
-            /*
-
-                                    <button title="What?" id="AddWhatButton"><img src="/icon/rrze/emblems/information.png"></button>
-                                    <button title="How/Why?" id="AddDescriptionButton"><img src="/icon/rrze/actions/quote.png"></button>
-                                    <button title="When?" id="AddWhenButton" ><img src="/icon/clock.png"></button>
-                                    <button title="Where?" id="AddLocationButton"><img src="/icon/rrze/emblems/globe.png"></button>
-                                    <button title="Who?" id="AddWhoButton"><img src="/icon/rrze/categories/user-group.png"></button>
-
-
-                                    <button title="Upload"><img src="/icon/rrze/actions/dial-in.png"/></button>                
-                                    <!--<button>Save Privately...</button>-->
-                                    <!-- <button onclick="javascript:cloneFocus();" title="Clone"><span class="FocusButtonIcon ui-icon ui-icon-newwin"></span><span class="FocusButtonLabel">Clone</span></button> -->
-                                    <!-- <button onclick="javascript:deleteFocus();" title="Delete"><span class="FocusButtonIcon ui-icon ui-icon-trash"></span><span class="FocusButtonLabel">Delete</span></button> -->
-
-        <div id="UploadModal" data-backdrop="" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
-            <form id="FocusUploadForm" action="/upload" method="post" enctype="multipart/form-data">
-                <div>File:
-                    <input type="file" name="uploadfile" />
-                    <input type="submit" value="Upload" />
-                </div>
-            </form>
-            <div class="FocusUploadProgress">
-                <div class="FocusUploadBar"></div>
-                <div class="FocusUploadPercent">0%</div>
-            </div>
-            <div id="FocusUploadStatus"></div>        
-
-            <button class="btn" data-dismiss="modal" aria-hidden="true">OK</button>
-        </div>
-
-//function cloneFocus() {
-//    var y = getEditedFocus();
-//    var oldURI = y.id;
-//    y.id = uuid();
-//    y.author = window.self.id();
-//    commitFocus(y);
-//    saveObject(y);
-//
-//    $.pnotify({
-//        title: 'Cloning...',
-//        text: oldURI + ' -> ' + y.id
-//    });
-//    return y;
-//}
-//
-//function deleteFocus() {
-//    var f = window.self.focus();
-//
-//    $.pnotify({
-//        title: 'Delete coming soon',
-//        text: f.uri
-//    });
-//
-//}
-                                             */
+        //$('#FocusEdit button').button();       
+        /*
+         
+         <button title="What?" id="AddWhatButton"><img src="/icon/rrze/emblems/information.png"></button>
+         <button title="How/Why?" id="AddDescriptionButton"><img src="/icon/rrze/actions/quote.png"></button>
+         <button title="When?" id="AddWhenButton" ><img src="/icon/clock.png"></button>
+         <button title="Where?" id="AddLocationButton"><img src="/icon/rrze/emblems/globe.png"></button>
+         <button title="Who?" id="AddWhoButton"><img src="/icon/rrze/categories/user-group.png"></button>
+         
+         
+         <button title="Upload"><img src="/icon/rrze/actions/dial-in.png"/></button>                
+         <!--<button>Save Privately...</button>-->
+         <!-- <button onclick="javascript:cloneFocus();" title="Clone"><span class="FocusButtonIcon ui-icon ui-icon-newwin"></span><span class="FocusButtonLabel">Clone</span></button> -->
+         <!-- <button onclick="javascript:deleteFocus();" title="Delete"><span class="FocusButtonIcon ui-icon ui-icon-trash"></span><span class="FocusButtonLabel">Delete</span></button> -->
+         
+         <div id="UploadModal" data-backdrop="" class="modal hide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none">
+         <form id="FocusUploadForm" action="/upload" method="post" enctype="multipart/form-data">
+         <div>File:
+         <input type="file" name="uploadfile" />
+         <input type="submit" value="Upload" />
+         </div>
+         </form>
+         <div class="FocusUploadProgress">
+         <div class="FocusUploadBar"></div>
+         <div class="FocusUploadPercent">0%</div>
+         </div>
+         <div id="FocusUploadStatus"></div>        
+         
+         <button class="btn" data-dismiss="modal" aria-hidden="true">OK</button>
+         </div>
+         
+         //function cloneFocus() {
+         //    var y = getEditedFocus();
+         //    var oldURI = y.id;
+         //    y.id = uuid();
+         //    y.author = window.self.id();
+         //    commitFocus(y);
+         //    saveObject(y);
+         //
+         //    $.pnotify({
+         //        title: 'Cloning...',
+         //        text: oldURI + ' -> ' + y.id
+         //    });
+         //    return y;
+         //}
+         //
+         //function deleteFocus() {
+         //    var f = window.self.focus();
+         //
+         //    $.pnotify({
+         //        title: 'Delete coming soon',
+         //        text: f.uri
+         //    });
+         //
+         //}
+         */
 
         d.addClass('ObjectEditDiv');
-        
-        if (hideWidgets!=true) {
+
+        if (hideWidgets != true) {
             var whatButton = $('<button title="What?"><img src="/icon/rrze/emblems/information.png"></button>');
             whatButton.click(function() {
-                var p = newPopup('Select Tags for ' + nameInput.val(), { modal: true, position: 'center', minWidth: 400 } );
+                var p = newPopup('Select Tags for ' + nameInput.val(), {modal: true, position: 'center', minWidth: 400});
                 p.append(newTagger([], function(t) {
                     var y = getEditedFocus();
                     for (var i = 0; i < t.length; i++) {
-                        objAddTag(y, t[i]); 
+                        objAddTag(y, t[i]);
                     }
                     update(y);
                     p.dialog('close');
@@ -361,7 +363,7 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
 
             var howButton = $('<button title="How/Why?" id="AddDescriptionButton"><img src="/icon/rrze/actions/quote.png"></button>');
             howButton.click(function() {
-                update(objAddValue(getEditedFocus(), 'textarea', ''));            
+                update(objAddValue(getEditedFocus(), 'textarea', ''));
             });
             d.append(howButton);
 
@@ -370,7 +372,7 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
 
             var whereButton = $('<button title="Where?"><img src="/icon/rrze/emblems/globe.png"></button>');
             whereButton.click(function() {
-                update(objAddValue(getEditedFocus(), 'spacepoint', ''));            
+                update(objAddValue(getEditedFocus(), 'spacepoint', ''));
             });
             d.append(whereButton);
 
@@ -378,31 +380,31 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
             d.append(whoButton);
 
             var drawButton = $('<button title="Draw"><img src="/icon/rrze/emblems/pen.png"/></button>');
-			drawButton.click(function() {
-                update(objAddValue(getEditedFocus(), 'sketch', ''));            
-			});
-			d.append(drawButton);
+            drawButton.click(function() {
+                update(objAddValue(getEditedFocus(), 'sketch', ''));
+            });
+            d.append(drawButton);
 
             var uploadButton = $('<button title="Upload"><img src="/icon/rrze/actions/dial-in.png"/></button>');
             uploadButton.click(function() {
 
-				var y = newDiv();
-				var fuf = y.append('<form id="FocusUploadForm" action="/upload" method="post" enctype="multipart/form-data"><div>File:<input type="file" name="uploadfile" /><input type="submit" value="Upload" /></div></form>');
-				y.append('<div class="FocusUploadProgress"><div class="FocusUploadBar"></div><div class="FocusUploadPercent">0%</div></div>');
-		        y.append('<div id="FocusUploadStatus"></div>');
-				var okButton = $('<button class="btn">OK</button>');
-				y.append(okButton);
+                var y = newDiv();
+                var fuf = y.append('<form id="FocusUploadForm" action="/upload" method="post" enctype="multipart/form-data"><div>File:<input type="file" name="uploadfile" /><input type="submit" value="Upload" /></div></form>');
+                y.append('<div class="FocusUploadProgress"><div class="FocusUploadBar"></div><div class="FocusUploadPercent">0%</div></div>');
+                y.append('<div id="FocusUploadStatus"></div>');
+                var okButton = $('<button class="btn">OK</button>');
+                y.append(okButton);
 
 
-				var x = newPopup('Upload',  { modal: true} );
-				x.append(y);
+                var x = newPopup('Upload', {modal: true});
+                x.append(y);
 
-				okButton.click(function() {
-					x.dialog('close');
-				});
+                okButton.click(function() {
+                    x.dialog('close');
+                });
 
                 var bar = $('.FocusUploadBar');
-				var percent = $('.FocusUploadPercent');				
+                var percent = $('.FocusUploadPercent');
                 var status = $('#FocusUploadStatus');
 
                 $('#FocusUploadForm').ajaxForm({
@@ -423,7 +425,7 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
                         var ab = $('<button>Add Image To Description</button>');
                         var absURL = url.substring(1);
                         ab.click(function() {
-			                update(objAddDescription(getEditedFocus(), '<a href="' + absURL + '"><img src="' + absURL + '"></img></a>'));
+                            update(objAddDescription(getEditedFocus(), '<a href="' + absURL + '"><img src="' + absURL + '"></img></a>'));
                         });
                         status.append('<br/>');
                         status.append(ab);
@@ -431,113 +433,113 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
                 });
 
             });
-			d.append(uploadButton);
+            d.append(uploadButton);
 
-			/*
-			var uploadArea = $('<div id="holder">Upload...</div>');
-			uploadArea.attr('style', 'border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;');
-            var filereader = $('<div id="filereader"></div>');
-            var formdata = $('<div id="formdata"></div>');
-            var progress = $('<div id="progress"></div>');
-			d.append(uploadArea);
-			d.append(filereader);
-			d.append(formdata);
-			d.append(progress);
-			{
-				var holder = uploadArea.get(),
-				   tests = {
-					  filereader: typeof FileReader != 'undefined',
-					  dnd: 'draggable' in document.createElement('span'),
-					  formdata: !!window.FormData,
-					  progress: "upload" in new XMLHttpRequest
-					}, 
-					support = {
-					  filereader: filereader.get(),
-					  formdata: formdata.get(),
-					  progress: progress.get()
-					},
-					acceptedTypes = {
-					  'image/png': true,
-					  'image/jpeg': true,
-					  'image/gif': true
-					},
-					progress = document.getElementById('uploadprogress'),
-					fileupload = document.getElementById('upload');
-
-				_.each("filereader formdata progress".split(' '), function (api) {
-					  if (tests[api] === false) {
-						support[api].className = 'fail';
-					  } else {
-						// FFS. I could have done el.hidden = true, but IE doesn't support
-						// hidden, so I tried to create a polyfill that would extend the
-						// Element.prototype, but then IE10 doesn't even give me access
-						// to the Element object. Brilliant.
-						support[api].className = 'hidden';
-					  }
-				});
-
-				function previewfile(file) {
-				  if (tests.filereader === true && acceptedTypes[file.type] === true) {
-					var reader = new FileReader();
-					reader.onload = function (event) {
-					  var image = new Image();
-					  image.src = event.target.result;
-					  image.width = 250; // a fake resize
-					  holder.appendChild(image);
-					};
-
-					reader.readAsDataURL(file);
-				  }  else {
-					holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.size ? (file.size/1024|0) + 'K' : '');
-					console.log(file);
-				  }
-				}
-
-				function readfiles(files) {
-					debugger;
-					var formData = tests.formdata ? new FormData() : null;
-					for (var i = 0; i < files.length; i++) {
-					  if (tests.formdata) formData.append('file', files[i]);
-					  previewfile(files[i]);
-					}
-
-					// now post a new XHR request
-					if (tests.formdata) {
-					  var xhr = new XMLHttpRequest();
-					  xhr.open('POST', '/devnull.php');
-					  xhr.onload = function() {
-						progress.value = progress.innerHTML = 100;
-					  };
-
-					  if (tests.progress) {
-						xhr.upload.onprogress = function (event) {
-						  if (event.lengthComputable) {
-							var complete = (event.loaded / event.total * 100 | 0);
-							progress.value = progress.innerHTML = complete;
-						  }
-						}
-					  }
-
-					  xhr.send(formData);
-					}
-				}
-
-				//var tests.dnd = true;
-				//if (tests.dnd) { 
-				  holder.ondragover = function () { console.log('hover'); this.className = 'hover'; return false; };
-				  holder.ondragend = function () { this.className = ''; return false; };
-				  holder.ondrop = function (e) {
-					this.className = '';
-					e.preventDefault();
-					readfiles(e.dataTransfer.files);
-				  }
-				} else {
-				  fileupload.className = 'hidden';
-				  fileupload.querySelector('input').onchange = function () {
-					readfiles(this.files);
-				  };
-				//}
-			}*/
+            /*
+             var uploadArea = $('<div id="holder">Upload...</div>');
+             uploadArea.attr('style', 'border: 10px dashed #ccc; width: 300px; min-height: 300px; margin: 20px auto;');
+             var filereader = $('<div id="filereader"></div>');
+             var formdata = $('<div id="formdata"></div>');
+             var progress = $('<div id="progress"></div>');
+             d.append(uploadArea);
+             d.append(filereader);
+             d.append(formdata);
+             d.append(progress);
+             {
+             var holder = uploadArea.get(),
+             tests = {
+             filereader: typeof FileReader != 'undefined',
+             dnd: 'draggable' in document.createElement('span'),
+             formdata: !!window.FormData,
+             progress: "upload" in new XMLHttpRequest
+             }, 
+             support = {
+             filereader: filereader.get(),
+             formdata: formdata.get(),
+             progress: progress.get()
+             },
+             acceptedTypes = {
+             'image/png': true,
+             'image/jpeg': true,
+             'image/gif': true
+             },
+             progress = document.getElementById('uploadprogress'),
+             fileupload = document.getElementById('upload');
+             
+             _.each("filereader formdata progress".split(' '), function (api) {
+             if (tests[api] === false) {
+             support[api].className = 'fail';
+             } else {
+             // FFS. I could have done el.hidden = true, but IE doesn't support
+             // hidden, so I tried to create a polyfill that would extend the
+             // Element.prototype, but then IE10 doesn't even give me access
+             // to the Element object. Brilliant.
+             support[api].className = 'hidden';
+             }
+             });
+             
+             function previewfile(file) {
+             if (tests.filereader === true && acceptedTypes[file.type] === true) {
+             var reader = new FileReader();
+             reader.onload = function (event) {
+             var image = new Image();
+             image.src = event.target.result;
+             image.width = 250; // a fake resize
+             holder.appendChild(image);
+             };
+             
+             reader.readAsDataURL(file);
+             }  else {
+             holder.innerHTML += '<p>Uploaded ' + file.name + ' ' + (file.size ? (file.size/1024|0) + 'K' : '');
+             console.log(file);
+             }
+             }
+             
+             function readfiles(files) {
+             debugger;
+             var formData = tests.formdata ? new FormData() : null;
+             for (var i = 0; i < files.length; i++) {
+             if (tests.formdata) formData.append('file', files[i]);
+             previewfile(files[i]);
+             }
+             
+             // now post a new XHR request
+             if (tests.formdata) {
+             var xhr = new XMLHttpRequest();
+             xhr.open('POST', '/devnull.php');
+             xhr.onload = function() {
+             progress.value = progress.innerHTML = 100;
+             };
+             
+             if (tests.progress) {
+             xhr.upload.onprogress = function (event) {
+             if (event.lengthComputable) {
+             var complete = (event.loaded / event.total * 100 | 0);
+             progress.value = progress.innerHTML = complete;
+             }
+             }
+             }
+             
+             xhr.send(formData);
+             }
+             }
+             
+             //var tests.dnd = true;
+             //if (tests.dnd) { 
+             holder.ondragover = function () { console.log('hover'); this.className = 'hover'; return false; };
+             holder.ondragend = function () { this.className = ''; return false; };
+             holder.ondrop = function (e) {
+             this.className = '';
+             e.preventDefault();
+             readfiles(e.dataTransfer.files);
+             }
+             } else {
+             fileupload.className = 'hidden';
+             fileupload.querySelector('input').onchange = function () {
+             readfiles(this.files);
+             };
+             //}
+             }*/
 
 
             var saveButton = $('<button><b>Save/Share</b></button>');
@@ -549,13 +551,13 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
                     $.pnotify({
                         title: 'Unable to save.',
                         text: x.name,
-                        type: 'Error'            
-                    });                
+                        type: 'Error'
+                    });
                 }, function() {
                     $.pnotify({
-                        title: 'Saved (' + x.id.substring(0,6) + ')' ,
+                        title: 'Saved (' + x.id.substring(0, 6) + ')',
                         text: '<button disabled>Goto: ' + x.name + '</button>'  //TODO button to view object           
-                    });        
+                    });
                     self.notice(e);
                 });
                 d.parent().dialog('close');
@@ -565,52 +567,58 @@ function newObjectEdit(ix, editable, hideWidgets, onTagRemove, whenSliderChange)
             var exportButton = $('<button>Export</button>');
             exportButton.click(function() {
                 $.pnotify({
-                   title: x.id,
-                   text: JSON.stringify(x, null, 4)
+                    title: x.id,
+                    text: JSON.stringify(x, null, 4)
                 });
             });
             d.append(exportButton);
         }
 
     }
-    
+
     update(ix);
 
-    
-    return d;                
+
+    return d;
 }
 
 function applyTagStrengthClass(e, s) {
-    if (s === 0.0)     	 e.addClass('tag0');
-    else if (s <= 0.25)  e.addClass('tag25');
-    else if (s <= 0.50)  e.addClass('tag50');
-    else if (s <= 0.75)  e.addClass('tag75');
-    else                 e.addClass('tag100');    
+    if (s === 0.0)
+        e.addClass('tag0');
+    else if (s <= 0.25)
+        e.addClass('tag25');
+    else if (s <= 0.50)
+        e.addClass('tag50');
+    else if (s <= 0.75)
+        e.addClass('tag75');
+    else
+        e.addClass('tag100');
 }
 
 
 function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStrengthChange, onOrderChange, whenSliderChange) {
     var tag = t.id;
     var strength = t.strength;
-    
-    var d = newDiv().addClass('tagSection');
-    
-    if (strength==undefined) strength = 1.0;
-    
-    var tagLabel = $('<span>' + tag + '</span>').addClass('tagLabel');
-    
-    applyTagStrengthClass(d, strength);
-    
 
-        
+    var d = newDiv().addClass('tagSection');
+
+    if (strength == undefined)
+        strength = 1.0;
+
+    var tagLabel = $('<span>' + tag + '</span>').addClass('tagLabel');
+
+    applyTagStrengthClass(d, strength);
+
+
+
     if (editable) {
         var tagButtons = newDiv().addClass('tagButtons');
-        
+
         if (index > 0) {
             var upButton = $('<a href="#" title="Move Up">^</a>');
             upButton.addClass('tagButton');
             upButton.click(function() {
-                onOrderChange(index, index-1);            
+                onOrderChange(index, index - 1);
             });
             tagButtons.append(upButton);
         }
@@ -618,7 +626,7 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
             var downButton = $('<a href="#" title="Move Down">v</a>');
             downButton.addClass('tagButton');
             downButton.click(function() {
-                onOrderChange(index, index+1);            
+                onOrderChange(index, index + 1);
             });
             tagButtons.append(downButton);
         }
@@ -627,7 +635,7 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
             var weakenButton = $('<a href="#" title="Decrease">-</a>');
             weakenButton.addClass('tagButton');
             weakenButton.click(function() {
-                onStrengthChange(index, strength - 0.25);            
+                onStrengthChange(index, strength - 0.25);
             });
             tagButtons.append(weakenButton);
         }
@@ -640,66 +648,66 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
             tagButtons.append(strengthButton);
         }
 
-		if (strength > 0) {
-           var disableButton = $('<a href="#" title="Disable">x</a>');
+        if (strength > 0) {
+            var disableButton = $('<a href="#" title="Disable">x</a>');
             disableButton.addClass('tagButton');
             disableButton.click(function() {
                 onStrengthChange(index, 0);
             });
             tagButtons.append(disableButton);
- 		}
-		else {
-		}
-        
+        }
+        else {
+        }
+
         var removeButton = $('<a href="#" title="Remove">X</a>');
         removeButton.addClass('tagButton');
         removeButton.click(function() {
-           if (confirm("Remove " + tag + "?"))
+            if (confirm("Remove " + tag + "?"))
                 onRemove(index);
         });
         tagButtons.append(removeButton);
         d.append(tagButtons);
-    
+
         //d.hover(function(){ tagButtons.fadeIn(200);}, function() { tagButtons.fadeOut(200);});
         //d.hover(function(){ tagButtons.show();}, function() { tagButtons.hide();});                
         //tagButtons.hide();
     }
 
     d.append(tagLabel);
-	d.append('&nbsp;');
-    
-    
+    d.append('&nbsp;');
+
+
     var type;
     if (isPrimitive(tag)) {
         //tagLabel.hide();    
         type = tag;
     }
-    
+
     var prop = self.getProperty(tag);
     var defaultValue = null;
     if (prop) {
         type = prop.type;
-        tagLabel.html( prop.name );
-        
+        tagLabel.html(prop.name);
+
         if (prop.default) {
             defaultValue = prop.default;
         }
     }
-        
-    if (type == 'textarea') {        
-        
+
+    if (type == 'textarea') {
+
         if (editable) {
             var dd = $('<textarea/>').addClass('tagDescription');
-            
+
             if (t.value)
                 dd.val(t.value);
             else if (defaultValue)
                 dd.val(defaultValue);
 
             d.append(dd);
-            
+
             whenSaved.push(function(y) {
-               objAddValue(y, tag, dd.val(), strength);
+                objAddValue(y, tag, dd.val(), strength);
             });
         }
         else {
@@ -712,31 +720,54 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
     else if (type == 'cortexit') {
         //...
     }
-    else if ((type == 'text') || (type == 'url') || (type=='integer') || (type=='real')) {
-        
+    else if ((type == 'text') || (type == 'url') || (type == 'integer') || (type == 'real')) {
+
         if (editable) {
             var dd = $('<input type="text" placeholder="' + type + '"/>');
 
-            if (t.value)
-                dd.val(t.value);
-            else if (defaultValue)
-                dd.val(defaultValue);
-            
+
             d.append(dd);
-            
-            whenSaved.push(function(y) {
-                if ((type == 'text') || (type=='url')) {
-                    objAddValue(y, tag, dd.val(), strength);
-				}
-                else if (type == 'real') {
-                    var ddv = parseFloat(dd.val());
-                    if (isNaN(ddv)) ddv = dd.val();    //store as string                 
-                    objAddValue(y, tag, ddv, strength);
+
+            var sx = null;
+            if (prop) {
+                if (prop.units) {
+                    sx = $('<select></select>');
+                    _.each(prop.units, function(u) {
+                        sx.append('<option id="u">' + u + '</option>');
+                    });
+                    d.append(sx);
                 }
-                else if (type == 'integer') {
-                    var ddv = parseInt(dd.val());
-                    if (isNaN(ddv)) ddv = dd.val();     //store as string
-                    objAddValue(y, tag, ddv, strength);
+            }
+
+            if (t.value) {
+                if (t.value.unit) {
+                    //number and unit were both stored in a JSON object
+                    dd.val(t.value.number);
+                    sx.val(t.value.unit);
+                }
+                else {
+                    //only the number was present
+                    dd.val(t.value);
+                }
+            }
+            else if (defaultValue != null) {
+                dd.val(defaultValue);
+            }
+
+            whenSaved.push(function(y) {
+                if ((type == 'text') || (type == 'url')) {
+                    objAddValue(y, tag, dd.val(), strength);
+                }
+                else if ((type == 'real') || (type == 'integer')) {
+                    var ddv = (type == 'real') ? parseFloat(dd.val()) : parseInt(dd.val());
+
+                    if (isNaN(ddv))
+                        ddv = dd.val();    //store as string
+
+                    if (!sx)
+                        objAddValue(y, tag, ddv, strength);
+                    else
+                        objAddValue(y, tag, {number: ddv, unit: sx.val()}, strength);
                 }
             });
 
@@ -747,23 +778,23 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
                 dd.html(t.value);
             d.append(dd);
         }
-        
+
     }
     else if (type == 'boolean') {
-	var t = $('<input type="checkbox">');
-		
+        var t = $('<input type="checkbox">');
+
         var value = t.value;
-	if (!value) {
+        if (!value) {
             if (defaultValue)
                 value = defaultValue;
             else
-		value = true;
+                value = true;
         }
-            
-		
+
+
         t.attr('checked', value ? 'on' : undefined);
         d.append(t);
-        
+
         if (editable) {
             whenSaved.push(function(y) {
                 objAddValue(y, tag, t.attr('checked') == 'checked' ? true : false, strength);
@@ -772,24 +803,24 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
         else {
             t.attr("disabled", "disabled");
         }
-	}    
+    }
     else if (type == 'spacepoint') {
         var ee = newDiv();
-        
+
         var dd = newDiv();
         var de = uuid();
         dd.attr('id', de);
         dd = dd.addClass('focusMap');
 
         ee.append(dd);
-        
+
         var m;
-        
+
         if (editable) {
-            var lr = $('<input type="text" placeholder="Where" />');                    
+            var lr = $('<input type="text" placeholder="Where" />');
             lr.css('width', 'auto');
             ee.append(lr);
-            
+
             var cr = $('<select/>');
             cr.css('width', 'auto');
             cr.append('<option value="earth" selected>Earth</option>');
@@ -801,32 +832,32 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
                 cr.val('earth');
             });
             ee.append(cr);
-            
+
             var ar = $('<input type="text" placeholder="Altitude" />');
             ar.css('width', '15%');
             ee.append(ar);
-            
+
             whenSaved.push(function(y) {
                 var l = m.location();
                 objAddValue(y, tag, {
-                   lat: l.lat,
-                   lon: l.lon,
-                   zoom: m.zoom,
-                   planet: 'Earth'
+                    lat: l.lat,
+                    lon: l.lon,
+                    zoom: m.zoom,
+                    planet: 'Earth'
                 }, strength);
             });
 
         }
-        
+
         d.append(ee);
-        
-        
+
+
         later(function() {
             var lat = t.value.lat || 0;
             var lon = t.value.lon || 0;
             var zoom = t.value.zoom;
-            m = initLocationChooserMap(de, [lat,lon], zoom);
-            
+            m = initLocationChooserMap(de, [lat, lon], zoom);
+
         });
     }
     else if (type == 'timepoint') {
@@ -834,237 +865,246 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
             var lr = $('<input type="text" placeholder="Time" />');
             lr.val(new Date(t.at));
             d.append(lr);
-            var lb = $('<button style="margin-top: -0.5em"><i class="icon-calendar"/></button>');            
+            var lb = $('<button style="margin-top: -0.5em"><i class="icon-calendar"/></button>');
             d.append(lb);
-	    //TODO add 'Now' button
-            
+            //TODO add 'Now' button
+
             //TODO add save function
         }
         else {
             d.append(new Date(t.at));
-        }                    
+        }
     }
-	else if (type == 'sketch') {
-		var eu = uuid();
+    else if (type == 'sketch') {
+        var eu = uuid();
 
-		var ee = newDiv(eu);
+        var ee = newDiv(eu);
 
-		d.append(ee);
+        d.append(ee);
 
-		var options = {
-			width: 250,
-			height: 250,
-			editing: editable
-		};
-		if (t.value) {
-			options.strokes = JSON.parse(t.value);
-		}
-		later(function() {
-			var sketchpad = Raphael.sketchpad(eu, options);
+        var options = {
+            width: 250,
+            height: 250,
+            editing: editable
+        };
+        if (t.value) {
+            options.strokes = JSON.parse(t.value);
+        }
+        later(function() {
+            var sketchpad = Raphael.sketchpad(eu, options);
 
-			var value = "";
-			// When the sketchpad changes, update the input field.
-			sketchpad.change(function() {
-				value = sketchpad.json();				
-			});
-	        whenSaved.push(function(y) {
-	            objAddValue(y, "sketch", value, strength);
-			});
-		});
-	}
-        else if (type == 'timerange') {
-		var nn = Date.now();
-		var oldest = nn - 5 * 24 * 60 * 60 * 1000; //TODO make this configurable
+            var value = "";
+            // When the sketchpad changes, update the input field.
+            sketchpad.change(function() {
+                value = sketchpad.json();
+            });
+            whenSaved.push(function(y) {
+                objAddValue(y, "sketch", value, strength);
+            });
+        });
+    }
+    else if (type == 'timerange') {
+        var nn = Date.now();
+        var oldest = nn - 5 * 24 * 60 * 60 * 1000; //TODO make this configurable
 
-             if (editable) {
+        if (editable) {
 
-			var i = $('<input type="range" name="timecenter" min="1" max="10000">');
+            var i = $('<input type="range" name="timecenter" min="1" max="10000">');
 
-			if (t.value)
-				if ((t.value.start) && (t.value.end)) {
-					var tm = ((0.5 * (t.value.start + t.value.end))-oldest)/(nn-oldest) * 10000;
-					i.attr('value', parseInt(tm));				
-				}
+            if (t.value)
+                if ((t.value.start) && (t.value.end)) {
+                    var tm = ((0.5 * (t.value.start + t.value.end)) - oldest) / (nn - oldest) * 10000;
+                    i.attr('value', parseInt(tm));
+                }
 
-			var j = $('<span id="timecenter"/>');
-			j.append('Past');
-			j.append(i);
-			j.append('Now');
-			d.append(j);
+            var j = $('<span id="timecenter"/>');
+            j.append('Past');
+            j.append(i);
+            j.append('Now');
+            d.append(j);
 
-			var lb = $('<input type="checkbox">Latest</input>');
-			d.append(lb);
+            var lb = $('<input type="checkbox">Latest</input>');
+            d.append(lb);
 
-			var s = $('<select>');
-			s.append('<option value="1">5 mins</option>');
-			s.append('<option value="2">15 mins</option>');
-			s.append('<option value="3" selected>1 hour</option>');
-			s.append('<option value="4">6 hours</option>');
-			s.append('<option value="5">1 day</option>');
-			s.append('<option value="6">1 week</option>');
-			s.append('<option value="7">1 month</option>');
-			d.append(s);
-
-
-
-			var start = -1, end = -1;
-
-			d.append('<br/>');
-
-			var output = $('<span/>');
-			d.append(output);
-
-			var update = _.throttle(function() {
-				var rangeSec = 0;
-
-				var range = s.val();
-				if (range==='1') rangeSec = 5 * 60;
-				if (range==='2') rangeSec = 15 * 60;
-				if (range==='3') rangeSec = 60 * 60;
-				if (range==='4') rangeSec = 6 * 60 * 60;
-				if (range==='5') rangeSec = 24 * 60 * 60;
-				if (range==='6') rangeSec = 7 * 24 * 60 * 60;
-				if (range==='7') rangeSec = 30 * 24 * 60 * 60;
-				
-				start = end = 0;
+            var s = $('<select>');
+            s.append('<option value="1">5 mins</option>');
+            s.append('<option value="2">15 mins</option>');
+            s.append('<option value="3" selected>1 hour</option>');
+            s.append('<option value="4">6 hours</option>');
+            s.append('<option value="5">1 day</option>');
+            s.append('<option value="6">1 week</option>');
+            s.append('<option value="7">1 month</option>');
+            d.append(s);
 
 
-				if (lb.is(':checked')) {
-					start = new Date(nn - rangeSec * 1000);
-					end = new Date(nn);
-					j.hide();
-				}
-				else {
-					j.show();
-					var iv = i.val();
-					var p = parseFloat(i.val()) / 10000.0;
-					var current = oldest + p * (nn - oldest);
-					start = current - (rangeSec*1000.0)/2.0;
-					end = current + (rangeSec*1000.0)/2.0;
-					//console.log(oldest, newest, current, from, to);
-				}
+
+            var start = -1, end = -1;
+
+            d.append('<br/>');
+
+            var output = $('<span/>');
+            d.append(output);
+
+            var update = _.throttle(function() {
+                var rangeSec = 0;
+
+                var range = s.val();
+                if (range === '1')
+                    rangeSec = 5 * 60;
+                if (range === '2')
+                    rangeSec = 15 * 60;
+                if (range === '3')
+                    rangeSec = 60 * 60;
+                if (range === '4')
+                    rangeSec = 6 * 60 * 60;
+                if (range === '5')
+                    rangeSec = 24 * 60 * 60;
+                if (range === '6')
+                    rangeSec = 7 * 24 * 60 * 60;
+                if (range === '7')
+                    rangeSec = 30 * 24 * 60 * 60;
+
+                start = end = 0;
 
 
-				output.html(new Date(start) + '<br/>' + new Date(end));
-				onStrengthChange(tag);
-				if (whenSliderChange)
-					whenSliderChange(x);
-			}, 500);
+                if (lb.is(':checked')) {
+                    start = new Date(nn - rangeSec * 1000);
+                    end = new Date(nn);
+                    j.hide();
+                }
+                else {
+                    j.show();
+                    var iv = i.val();
+                    var p = parseFloat(i.val()) / 10000.0;
+                    var current = oldest + p * (nn - oldest);
+                    start = current - (rangeSec * 1000.0) / 2.0;
+                    end = current + (rangeSec * 1000.0) / 2.0;
+                    //console.log(oldest, newest, current, from, to);
+                }
 
-			var uup = function() {
-				later(function() {
-					update();
-				});
-			};
 
-			i.change(uup);
-			lb.change(uup);
-			s.change(uup);
+                output.html(new Date(start) + '<br/>' + new Date(end));
+                onStrengthChange(tag);
+                if (whenSliderChange)
+                    whenSliderChange(x);
+            }, 500);
 
-			update();
+            var uup = function() {
+                later(function() {
+                    update();
+                });
+            };
 
-			//TODO add calendar buttons
-            
+            i.change(uup);
+            lb.change(uup);
+            s.change(uup);
+
+            update();
+
+            //TODO add calendar buttons
+
             whenSaved.push(function(y) {
                 objAddValue(y, tag, {
-                   'from': end,
-                   'to': start
+                    'from': end,
+                    'to': start
                 }, strength);
             });
         }
         else {
             d.append(new Date(t.value.start) + ' ' + new Date(t.value.end));
         }
-        
+
     }
     else if (type == 'object') {
         if (editable) {
             var tt = $('<span></span>');
             var ts = $('<input></input>');
-            
+
             var value = t.value;
             ts.val(value);
-            
+
             //http://jqueryui.com/autocomplete/#default
             //http://jqueryui.com/autocomplete/#categories
 
-			//TODO filter by tag specified by ontology property metadata
-            var data = [ ];
+            //TODO filter by tag specified by ontology property metadata
+            var data = [];
             for (var k in self.objects()) {
                 var v = self.object(k);
                 if (value == k) {
                     ts.val(v.name);
                     ts.result = value;
                 }
-    
+
                 data.push({
-                   value: k,
-                   label: v.name
+                    value: k,
+                    label: v.name
                 });
             }
             ts.autocomplete({
                 source: data,
-                select: function( event, ui ) {
+                select: function(event, ui) {
                     ts.result = ui.item.value;
                     ts.val(ui.item.label);
                     /*
-                    $( "#project" ).val( ui.item.label );
-                    $( "#project-id" ).val( ui.item.value );
-                    $( "#project-description" ).html( ui.item.desc );
-                    $( "#project-icon" ).attr( "src", "images/" + ui.item.icon );
-                    */
-             
+                     $( "#project" ).val( ui.item.label );
+                     $( "#project-id" ).val( ui.item.value );
+                     $( "#project-description" ).html( ui.item.desc );
+                     $( "#project-icon" ).attr( "src", "images/" + ui.item.icon );
+                     */
+
                     return false;
                 }
             });
-            
+
             //TODO handle specific tag restriction
             /*self.objectsWithTag(t) {
-                
-            }*/
-            
+             
+             }*/
+
             var mb = $('<button title="Find Object">...</button>');
             mb.click(function() {
-               //TODO popup object browser 
+                //TODO popup object browser 
             });
-            
+
             tt.append(ts);
             tt.append(mb);
-            
+
             d.append(tt);
-            
+
             whenSaved.push(function(y) {
-               objAddValue(y, tag, ts.result || ts.val(), strength);
-            });            
+                objAddValue(y, tag, ts.result || ts.val(), strength);
+            });
         }
-    }    
-    else if (tag) {        
+    }
+    else if (tag) {
         var TAG = self.tags()[tag];
         whenSaved.push(function(y) {
-           objAddTag(y, tag, strength);
+            objAddTag(y, tag, strength);
         });
         if (!TAG) {
             //d.append('Unknown tag: ' + tag);            
         }
         else {
             var ti = getTagIcon(tag);
-            if (self.tags()[tag]!=undefined) {
-                tagLabel.html( TAG.name );        
+            if (self.tags()[tag] != undefined) {
+                tagLabel.html(TAG.name);
             }
             if (ti) {
                 tagLabel.prepend('<img src="' + ti + '"/>');
             }
             if (editable) {
                 /*var pb = $('<button>...</button>');
-                tagLabel.append(pb);*/
-                
+                 tagLabel.append(pb);*/
+
                 function getTagProperties(t) {
                     var TT = self.tags()[t];
-                    if (!TT) return [];
-                    if (!TT.properties) return [];
+                    if (!TT)
+                        return [];
+                    if (!TT.properties)
+                        return [];
                     return TT.properties;
                 }
-                
+
                 var pd = $('<ul/>');
                 //pd.addClass('tagSuggestions');
                 var pp = getTagProperties(tag);
@@ -1072,8 +1112,8 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
                     (function() {
                         var ppv = pp[i];
                         var PP = self.getProperty(ppv);
-						var ppn = PP.name;
-                        var appv = $('<a href="#" title="' + PP.type +'">' + ppn + '</a>');
+                        var ppn = PP.name;
+                        var appv = $('<a href="#" title="' + PP.type + '">' + ppn + '</a>');
                         var defaultValue = '';
                         appv.click(function() {
                             onAdd(ppv, defaultValue);
@@ -1083,178 +1123,186 @@ function newTagSection(x, index, t, editable, whenSaved, onAdd, onRemove, onStre
                         pd.append('&nbsp;');
                     })();
                 }
-                
+
                 d.append(pd);
             }
-    
+
             /*
-            if (t.value) {
-                for (var v = 0; v < t.value.length; v++) {
-                    var vv = t.value[v];
-                    var pv = self.getProperty(vv.id);
-                    //var pe = newPropertyEdit(vv, pv);
-                    var pe = newTagSection(t, v, vv, editable);
-                    //this.propertyEdits.push(pe);
-                    d.append(pe);
-                }
-            }*/
+             if (t.value) {
+             for (var v = 0; v < t.value.length; v++) {
+             var vv = t.value[v];
+             var pv = self.getProperty(vv.id);
+             //var pe = newPropertyEdit(vv, pv);
+             var pe = newTagSection(t, v, vv, editable);
+             //this.propertyEdits.push(pe);
+             d.append(pe);
+             }
+             }*/
         }
     }
-    
+
     return d;
 }
 
 function newPropertyView(x, vv) {
-		
+
     var p = self.getProperty(vv.id);
     if (!p)
         return ('<li>' + vv.id + ': ' + vv.value + '</li>');
-        
+
     if (p.type == 'object') {
-        var o = self.getObject(vv.value) || { name: vv.value };
-        
+        var o = self.getObject(vv.value) || {name: vv.value};
+
         return ('<li>' + p.name + ': <a href="javascript:newPopupObjectView(\'' + vv.value + '\')">' + o.name + '</a></li>');
     }
     else if (p.type == 'url') {
         var u = vv.value;
-        return ('<li>' + p.name + ': <a target="_blank" href="' + u + '">' + u + '</a></li>');        
+        return ('<li>' + p.name + ': <a target="_blank" href="' + u + '">' + u + '</a></li>');
     }
-	else if ((p.type == 'integer') && (p.incremental)) {
-		function goprev() {
-			objSetFirstValue(x, vv.id, ii-1);
-			self.notice(x);				
-			self.pub(x);				
-		}
-		function gonext() {
-			objSetFirstValue(x, vv.id, ii+1);
-			self.notice(x);				
-			self.pub(x);				
-		}
+    else if ((p.type == 'integer') && (p.incremental)) {
+        function goprev() {
+            objSetFirstValue(x, vv.id, ii - 1);
+            self.notice(x);
+            self.pub(x);
+        }
+        function gonext() {
+            objSetFirstValue(x, vv.id, ii + 1);
+            self.notice(x);
+            self.pub(x);
+        }
 
         var v = $('<li>' + p.name + ': ' + vv.value + '</li>');
-		var ii = vv.value;
-		if (p.min < vv.value) {
-			var prev = $('<button>&lt;</button>');
-			v.prepend(prev);
-			prev.click(function() {
-				later(goprev);
-			});
-		}
-		//TODO allow for max
-		var next = $('<button>&gt;</button>');
-		next.click(function() {
-			later(gonext);
-		});
-		v.append(next);
-		return v;
-		
-	}
+        var ii = vv.value;
+        if (p.min < vv.value) {
+            var prev = $('<button>&lt;</button>');
+            v.prepend(prev);
+            prev.click(function() {
+                later(goprev);
+            });
+        }
+        //TODO allow for max
+        var next = $('<button>&gt;</button>');
+        next.click(function() {
+            later(gonext);
+        });
+        v.append(next);
+        return v;
+
+    }
+    else if ((p.type == 'integer') || (p.type == 'real')) {
+        if (vv.value.unit) {
+            return $('<li>' + p.name + ': ' + vv.value.number + ' ' + vv.value.unit + '</li>');
+        }
+        else {
+            return $('<li>' + p.name + ': ' + vv.value + '</li>');
+        }
+    }
     else {
         var v = $('<li>' + p.name + ': ' + vv.value + '</li>');
-        
+
         //Property Actions
         //TODO HACK make this more abstract and extendable by plugins
-        
+
         if ((vv.id == 'walletBTC') || (vv.id == 'walletPayPal') || (vv.id == 'walletRipple')) {
             var payButton = $('<button>Pay</button>');
             payButton.click(function() {
-               alert('Payments not implemented yet.');
+                alert('Payments not implemented yet.');
             });
 
             var vu = $('<ul/>');
-            vu.append(payButton);            
+            vu.append(payButton);
             v.append(vu);
 
         }
-        
-        
+
+
         return v;
     }
 }
 
 
 /**
-produces a self-contained widget representing a nobject (x) to a finite depth. activates all necessary renderers to make it presented
-*/
+ produces a self-contained widget representing a nobject (x) to a finite depth. activates all necessary renderers to make it presented
+ */
 function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
 
     if (!x) {
         return newDiv().html('Object Missing');
     }
 
-	if (objHasTag(x, 'PDF')) {
-		var ee = uuid();
-		var cd = $('<canvas/>')
-		cd.attr('id', ee);
+    if (objHasTag(x, 'PDF')) {
+        var ee = uuid();
+        var cd = $('<canvas/>')
+        cd.attr('id', ee);
 
-		var pdfPage = objFirstValue(x, 'slideNumber');
-		var pdfPath = objFirstValue(x, 'pdfURL');
-		if (pdfPage && pdfPath)  {
+        var pdfPage = objFirstValue(x, 'slideNumber');
+        var pdfPath = objFirstValue(x, 'pdfURL');
+        if (pdfPage && pdfPath) {
 
-			PDFJS.getDocument(pdfPath).then(function(pdf) {
-			  // Using promise to fetch the page
-			  pdf.getPage(pdfPage).then(function(page) {
-				var scale = 1.0;
-				var viewport = page.getViewport(scale);
+            PDFJS.getDocument(pdfPath).then(function(pdf) {
+                // Using promise to fetch the page
+                pdf.getPage(pdfPage).then(function(page) {
+                    var scale = 1.0;
+                    var viewport = page.getViewport(scale);
 
-				//
-				// Prepare canvas using PDF page dimensions
-				//
-				var canvas = document.getElementById(ee);
-				var context = canvas.getContext('2d');
-				canvas.height = viewport.height;
-				canvas.width = viewport.width;
+                    //
+                    // Prepare canvas using PDF page dimensions
+                    //
+                    var canvas = document.getElementById(ee);
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-				//
-				// Render PDF page into canvas context
-				//
-				var renderContext = {
-				  canvasContext: context,
-				  viewport: viewport
-				};
-				page.render(renderContext);
-			  });
-			});
-		}
-		else {
-			cd.prepend('Unable to find PDF source.');
-		}
-	}
+                    //
+                    // Render PDF page into canvas context
+                    //
+                    var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
+                });
+            });
+        }
+        else {
+            cd.prepend('Unable to find PDF source.');
+        }
+    }
 
 
-    
+
     var mini = (depthRemaining == 0);
-    
+
 
     var d = $('<div class="objectView ui-widget-content ui-corner-all">');
-	var oStyle = x.style;
-	d.attr('style', "font-size:" + ((r) ? ( (0.5 + r)*100.0 + '%') : ("100%") ) + (oStyle ? '; ' + oStyle : '') );
-	
+    var oStyle = x.style;
+    d.attr('style', "font-size:" + ((r) ? ((0.5 + r) * 100.0 + '%') : ("100%")) + (oStyle ? '; ' + oStyle : ''));
+
     var xn = x.name;
     var authorID = x.author;
 
-	d.append(cd);
+    d.append(cd);
 
     if (!isSelfObject(x.id)) { //exclude Self- objects
-            if (x.author) {
-                    var a = x.author;
-                    var as = self.getSelf(x.author);
-                    if (as)
-                            a = as.name;
-                    xn = a + ': ' + xn;
-            }
+        if (x.author) {
+            var a = x.author;
+            var as = self.getSelf(x.author);
+            if (as)
+                a = as.name;
+            xn = a + ': ' + xn;
+        }
     }
 
     var replies = newDiv();
-    
+
     function refreshReplies() {
-        var r = self.getReplies(x.id);        
+        var r = self.getReplies(x.id);
         if (r.length > 0) {
             replies.show();
             //TODO sort the replies by age, oldest first
             for (var i = 0; i < r.length; i++) {
                 var p = r[i];
-                replies.append(newObjectSummary(self.getObject(p), null, /*r*0.618*/ null, depthRemaining-1));
+                replies.append(newObjectSummary(self.getObject(p), null, /*r*0.618*/ null, depthRemaining - 1));
             }
         }
         else {
@@ -1264,192 +1312,211 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
 
     //var hb = newDiv().addClass('ObjectViewHideButton ui-widget-header ui-corner-tl');
     var hb = newDiv().addClass('ObjectViewHideButton ui-corner-tl'); //without ui-widget-header, it is faster CSS according to Chrome profiler
-    
-    var favoriteButton = $('<button title="Toggle Favorite" class="ui-widget-content ui-button ui-corner-tl">*</button>');
-	favoriteButton.click(function() {
-		var ot = objTags(x);
-		var exists = _.contains(ot, 'Favorite');
-		if (!exists) {
-			$.pnotify('Added favorite.');
-			x = objAddTag(x, 'Favorite');
-		}
-		else {
-			var n = ot.indexOf('Favorite');
-			$.pnotify('Removed favorite.');
-			//$.pnotify({ title: 'Removed favorite.', text: 'At index ' + n });
-			x = objRemoveValue(x, n);
-		}
 
-   		self.pub(x, function (err) {
+    var favoriteButton = $('<button title="Toggle Favorite" class="ui-widget-content ui-button ui-corner-tl">*</button>');
+    favoriteButton.click(function() {
+        var ot = objTags(x);
+        var exists = _.contains(ot, 'Favorite');
+        if (!exists) {
+            $.pnotify('Added favorite.');
+            x = objAddTag(x, 'Favorite');
+        }
+        else {
+            var n = ot.indexOf('Favorite');
+            $.pnotify('Removed favorite.');
+            //$.pnotify({ title: 'Removed favorite.', text: 'At index ' + n });
+            x = objRemoveValue(x, n);
+        }
+
+        self.pub(x, function(err) {
             $.pnotify({
                 title: 'Error updating Favorite',
                 text: err,
                 type: 'Error'
-            })                        
+            })
         }, function() {
             self.notice(x);
         });
-	});
+    });
 
     hb.append(favoriteButton);
-    
+
     var replyButton, focusButton, deleteButton;
     if (!mini) {
         replyButton = $('<button title="Reply" class="ui-widget-content ui-button">r</button>');
         replyButton.click(function() {
-            
+
             newReply.show();
             newReply.html('');
-            newReply.append(newReplyWidget( 
-                //on reply
-                function(text) {
-                    
-                    newReply.hide();
-                    
-                    var rr = {
-                        name: text,
-                        id: uuid(), 
-                        value: [],
-                        replyTo: [ x.id ],
-                        createdAt: Date.now()
-                    };
-                    
-                    
-                    
-                    self.pub(rr, function (err) {
-                        $.pnotify({
-                            title: 'Error replying (' + x.id.substring(0,6) + ')',
-                            text: err,
-                            type: 'Error'
-                        })                        
-                    }, function() {
-                        self.notice(rr);
-                        refreshReplies();
-                        $.pnotify({
-                            title: 'Replied (' + x.id.substring(0,6) + ')'
-                        })
-                    });
-                    
-                },
-                
-                //on cancel
-                function() {                
-                    newReply.hide();
-                }
-            ));
-            replyButton.enabled = false;
-        });
-        hb.append(replyButton);
+            newReply.append(newReplyWidget(
+                    //on reply
+                            function(text) {
 
-        
-        focusButton = $('<button title="Edit" class="ui-widget-content ui-button">e</button>');
-    	focusButton.click(function() {
-            var oid = x.id;
-            ///Backbone.history.navigate('/object/' + oid + '/focus', {trigger: true});
-            var e = newPopup("Edit " + oid);
-            e.append(newObjectEdit(x, true));
-    	});
-    }
-    
-	deleteButton = $('<button title="Delete" class="ui-widget-content ui-button" style="padding-right:8px;">x</button>');
-	deleteButton.click(function() {
-            if (confirm('Permanently delete? ' + x.id)) {
-                    self.deleteObject(x);			
+                                newReply.hide();
+
+                                var rr = {
+                                    name: text,
+                                    id: uuid(),
+                                    value: [],
+                                    replyTo: [x.id],
+                                    createdAt: Date.now()
+                                };
+
+
+
+                                self.pub(rr, function(err) {
+                                    $.pnotify({
+                                        title: 'Error replying (' + x.id.substring(0, 6) + ')',
+                                        text: err,
+                                        type: 'Error'
+                                    })
+                                }, function() {
+                                    self.notice(rr);
+                                    refreshReplies();
+                                    $.pnotify({
+                                        title: 'Replied (' + x.id.substring(0, 6) + ')'
+                                    })
+                                });
+
+                            },
+                            //on cancel
+                                    function() {
+                                        newReply.hide();
+                                    }
+                            ));
+                            replyButton.enabled = false;
+                        });
+                hb.append(replyButton);
+
+
+                focusButton = $('<button title="Edit" class="ui-widget-content ui-button">e</button>');
+                focusButton.click(function() {
+                    var oid = x.id;
+                    ///Backbone.history.navigate('/object/' + oid + '/focus', {trigger: true});
+                    var e = newPopup("Edit " + oid);
+                    e.append(newObjectEdit(x, true));
+                });
             }
-        });
-        
-        if (deleteButton)
-          deleteButton.hover(
-                  function() { $(this).addClass('ui-state-hover'); },
-                  function() { $(this).removeClass('ui-state-hover'); }
-          );
 
-        favoriteButton.hover(
-                function() { $(this).addClass('ui-state-hover'); },
-                function() { $(this).removeClass('ui-state-hover'); }
+    deleteButton = $('<button title="Delete" class="ui-widget-content ui-button" style="padding-right:8px;">x</button>');
+    deleteButton.click(function() {
+        if (confirm('Permanently delete? ' + x.id)) {
+            self.deleteObject(x);
+        }
+    });
+
+    if (deleteButton)
+        deleteButton.hover(
+                function() {
+                    $(this).addClass('ui-state-hover');
+                },
+                function() {
+                    $(this).removeClass('ui-state-hover');
+                }
         );
-        if (replyButton)
-          replyButton.hover(
-                  function() { $(this).addClass('ui-state-hover'); },
-                  function() { $(this).removeClass('ui-state-hover'); }
-          );
 
-        if (focusButton)
-          focusButton.hover(
-                  function() { $(this).addClass('ui-state-hover'); },
-                  function() { $(this).removeClass('ui-state-hover'); }
-          );
-                
-	hb.append(focusButton);
-	hb.append(deleteButton);
-	
-/*
-	var cloneButton = $('<button title="Clone" class="ui-widget-content ui-button" style="padding-right:8px;">c</button>');
-	var varyButton = $('<button title="Vary" class="ui-widget-content ui-button" style="padding-right:8px;">v</button>');
-	hb.append(cloneButton);
-	hb.append(varyButton);
-*/
+    favoriteButton.hover(
+            function() {
+                $(this).addClass('ui-state-hover');
+            },
+            function() {
+                $(this).removeClass('ui-state-hover');
+            }
+    );
+    if (replyButton)
+        replyButton.hover(
+                function() {
+                    $(this).addClass('ui-state-hover');
+                },
+                function() {
+                    $(this).removeClass('ui-state-hover');
+                }
+        );
 
-	d.append(hb);
-	
+    if (focusButton)
+        focusButton.hover(
+                function() {
+                    $(this).addClass('ui-state-hover');
+                },
+                function() {
+                    $(this).removeClass('ui-state-hover');
+                }
+        );
+
+    hb.append(focusButton);
+    hb.append(deleteButton);
+
+    /*
+     var cloneButton = $('<button title="Clone" class="ui-widget-content ui-button" style="padding-right:8px;">c</button>');
+     var varyButton = $('<button title="Vary" class="ui-widget-content ui-button" style="padding-right:8px;">v</button>');
+     hb.append(cloneButton);
+     hb.append(varyButton);
+     */
+
+    d.append(hb);
+
     (function() {
-	    //d.hover(function(){ hb.fadeIn(200);}, function() { hb.fadeOut(200);});
-        d.hover(function(){ hb.show(); }, function() { hb.hide(); });        
+        //d.hover(function(){ hb.fadeIn(200);}, function() { hb.fadeOut(200);});
+        d.hover(function() {
+            hb.show();
+        }, function() {
+            hb.hide();
+        });
     })();
     hb.hide();
 
-    
-	var authorClient = self.getSelf(authorID);
-	if (authorClient) {
-		if (authorID) {
-			var av = getAvatar(authorClient).attr('align', 'left');
-			
-			d.append(av);
-			av.wrap('<div class="AvatarIcon"/>');
-		}
-	}
-    
-	//Selection Checkbox
-	var selectioncheck = $('<input type="checkbox"/>');
-	selectioncheck.addClass('ObjectSelection');
-	selectioncheck.attr('oid', x.id);
-	selectioncheck.click(function() {
-		refreshActionContext();
-	});
 
-	//Name
-	if (x.name) {
-	    var haxn = $('<h1>');
-		if (nameNotClickable) {
-			haxn.html(xn);
-		}
-		else {
-		    var axn = $('<a href="#">' + xn + '</a>');
-		    axn.attr('title', x.id);
-		    axn.click(function() {
-		       newPopupObjectView(x.id); 
-		    });
-		    haxn.append(axn);
-		}
-		haxn.prepend(selectioncheck);
-		d.append(haxn);
-	}
-	else {
-		d.append(selectioncheck);
-	}
-	
+    var authorClient = self.getSelf(authorID);
+    if (authorClient) {
+        if (authorID) {
+            var av = getAvatar(authorClient).attr('align', 'left');
+
+            d.append(av);
+            av.wrap('<div class="AvatarIcon"/>');
+        }
+    }
+
+    //Selection Checkbox
+    var selectioncheck = $('<input type="checkbox"/>');
+    selectioncheck.addClass('ObjectSelection');
+    selectioncheck.attr('oid', x.id);
+    selectioncheck.click(function() {
+        refreshActionContext();
+    });
+
+    //Name
+    if (x.name) {
+        var haxn = $('<h1>');
+        if (nameNotClickable) {
+            haxn.html(xn);
+        }
+        else {
+            var axn = $('<a href="#">' + xn + '</a>');
+            axn.attr('title', x.id);
+            axn.click(function() {
+                newPopupObjectView(x.id);
+            });
+            haxn.append(axn);
+        }
+        haxn.prepend(selectioncheck);
+        d.append(haxn);
+    }
+    else {
+        d.append(selectioncheck);
+    }
+
     var mdline = $('<h2></h2>');
     mdline.addClass('MetadataLine');
 
     var ot = objTags(x);
     var ots = objTagStrength(x, false);
-    
+
     for (var i = 0; i < ot.length; i++) {
-        var t = ot[i];   
+        var t = ot[i];
 
         if (self.isProperty(t))
             continue;
-            
+
         var tt = self.getTag(t);
         if (tt) {
             var ttt = newTagButton(tt);
@@ -1460,137 +1527,140 @@ function newObjectSummary(x, onRemoved, r, depthRemaining, nameNotClickable) {
             mdline.append('<a href="#">' + t + '</a>');
         }
         mdline.append('&nbsp;');
-    }        
-    
-	var spacepoint = objSpacePoint(x);        
-	if (spacepoint) {
-            var lat = _n(spacepoint.lat);
-            var lon = _n(spacepoint.lon);
-            var mll = objSpacePointLatLng(self.myself());
-            if (mll) {
-                    var dist = '?';
-                    //TODO check planet
-                    var sx = [spacepoint.lat, spacepoint.lon] ;
-                    if (mll)
-                         dist = geoDist(sx, mll);
+    }
 
-                    mdline.append('&nbsp;<span>[' + lat + ',' + lon + '] ' + _n(dist) + ' km away</span>');
-            }
-            else {
-                    mdline.append('&nbsp;<span>[' + lat + ',' + lon + ']</span>');        
-            }
-	}
-    
+    var spacepoint = objSpacePoint(x);
+    if (spacepoint) {
+        var lat = _n(spacepoint.lat);
+        var lon = _n(spacepoint.lon);
+        var mll = objSpacePointLatLng(self.myself());
+        if (mll) {
+            var dist = '?';
+            //TODO check planet
+            var sx = [spacepoint.lat, spacepoint.lon];
+            if (mll)
+                dist = geoDist(sx, mll);
+
+            mdline.append('&nbsp;<span>[' + lat + ',' + lon + '] ' + _n(dist) + ' km away</span>');
+        }
+        else {
+            mdline.append('&nbsp;<span>[' + lat + ',' + lon + ']</span>');
+        }
+    }
+
     var ww = objWhen(x) || x.modifiedAt || x.createdAt || null;
     var now = Date.now();
     if (ww) {
         if (ww < now) {
             var tt = $('<time class="timeago"/>');
-            function ISODateString(d){
-                function pad(n){return n<10 ? '0'+n : n}
-                return d.getUTCFullYear()+'-'
-                  + pad(d.getUTCMonth()+1)+'-'
-                  + pad(d.getUTCDate())+'T'
-                  + pad(d.getUTCHours())+':'
-                  + pad(d.getUTCMinutes())+':'
-                  + pad(d.getUTCSeconds())+'Z'}
+            function ISODateString(d) {
+                function pad(n) {
+                    return n < 10 ? '0' + n : n
+                }
+                return d.getUTCFullYear() + '-'
+                        + pad(d.getUTCMonth() + 1) + '-'
+                        + pad(d.getUTCDate()) + 'T'
+                        + pad(d.getUTCHours()) + ':'
+                        + pad(d.getUTCMinutes()) + ':'
+                        + pad(d.getUTCSeconds()) + 'Z'
+            }
 
             tt.attr('datetime', ISODateString(new Date(ww)));
             mdline.append(tt);
         }
-        else {            
+        else {
             mdline.append('&nbsp;');
             mdline.append(new Date(ww));
         }
-        
+
     }
-    
+
     d.append(mdline);
-    
-	//d.append('<h3>Relevance:' + parseInt(r*100.0)   + '%</h3>');
-	
+
+    //d.append('<h3>Relevance:' + parseInt(r*100.0)   + '%</h3>');
+
     if (!mini) {
         var desc = objDescription(x);
         if (desc) {
-            d.append('<p>' + desc + '</p>');		
+            d.append('<p>' + desc + '</p>');
         }
 
-	
+
         if (x.value) {
             var ud = $('<ul>');
             d.append(ud);
             for (var vi = 0; vi < x.value.length; vi++) {
                 var vv = x.value[vi];
 
-				if (vv.id == 'sketch') {
-					var eu = uuid();
+                if (vv.id == 'sketch') {
+                    var eu = uuid();
 
-					var ee = newDiv(eu);
+                    var ee = newDiv(eu);
 
-					ud.append(ee);
-					
-					var options = {
-						width: 250,
-						height: 250,
-						editing: false
-					};
-					if (vv.value) {
-						options.strokes = JSON.parse(vv.value);
-					}
-					later(function() {
-						var sketchpad = Raphael.sketchpad(eu, options);
-					});
-					continue;
-				}
-				else if (vv.id == 'timerange') {					
-					/*if (ISODateString) {
-						ud.append(ISODateString(new Date(vv.value.start)) + ' '
-								 + ISODateString(new Date(vv.value.start)));
-					}
-					else*/ {
-						//mozilla: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
-						ud.append(new Date(vv.value.start).toISOString()  + ' '
-								 + new Date(vv.value.start).toISOString() );
-					}
-				}
-				
+                    ud.append(ee);
+
+                    var options = {
+                        width: 250,
+                        height: 250,
+                        editing: false
+                    };
+                    if (vv.value) {
+                        options.strokes = JSON.parse(vv.value);
+                    }
+                    later(function() {
+                        var sketchpad = Raphael.sketchpad(eu, options);
+                    });
+                    continue;
+                }
+                else if (vv.id == 'timerange') {
+                    /*if (ISODateString) {
+                     ud.append(ISODateString(new Date(vv.value.start)) + ' '
+                     + ISODateString(new Date(vv.value.start)));
+                     }
+                     else*/ {
+                        //mozilla: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString
+                        ud.append(new Date(vv.value.start).toISOString() + ' '
+                                + new Date(vv.value.start).toISOString());
+                    }
+                }
+
                 if (self.isProperty(vv.id))
                     ud.append(newPropertyView(x, vv));
-                }
+            }
         }
     }
-    
+
     if (!mini) {
 
         replies.addClass('ObjectReply');
         replies.hide();
         d.append(replies);
-    	
+
         var newReply = newDiv();
         newReply.addClass('ObjectReply objectView');
         newReply.hide();
         d.append(newReply);
-    	
+
         refreshReplies();
     }
-    
+
     return d;
 }
 
 
 function withObject(uri, success, failure) {
-	$.getJSON('/object/' + uri + '/json', function(s) {
-		
-		if (s.length == 0) {
-			if (failure)
-				failure();
-		}
-		else {
-			if (success) {				
-				success(s);
-			}
-		}
-	});
+    $.getJSON('/object/' + uri + '/json', function(s) {
+
+        if (s.length == 0) {
+            if (failure)
+                failure();
+        }
+        else {
+            if (success) {
+                success(s);
+            }
+        }
+    });
 }
 
 
@@ -1599,50 +1669,50 @@ function newTagTree(param) {
     var onSelectionChange = param.onSelectionChange;
     var addToTree = param.addtoTree;
     var newTagLayerDiv = param.newTagDiv;
-    
-    a.html('');    
-    
-    var tree = newDiv();    
-    
+
+    a.html('');
+
+    var tree = newDiv();
+
     var isGeographic = $('#GeographicToggle').is(':checked');
-        
+
     var stc;
     if (isGeographic) {
         stc = self.getTagCount(false, objGeographic);
     }
     else {
-        stc = self.getTagCount();        
+        stc = self.getTagCount();
     }
-                    
+
     var T = [
-/*        {
-            label: 'node1',
-            children: [
-                { label: '<button>child1</button>' },
-                { label: 'child2' }
-            ]
-        },
-        {
-            label: 'node2',
-            children: [
-                { label: 'child3' }
-            ]
-        } */
+        /*        {
+         label: 'node1',
+         children: [
+         { label: '<button>child1</button>' },
+         { label: 'child2' }
+         ]
+         },
+         {
+         label: 'node2',
+         children: [
+         { label: 'child3' }
+         ]
+         } */
     ];
 
-    
-    
+
+
     function subtree(root, i) {
         var name, xi;
         if (i.name) {
             name = i.name;
             xi = i.uri;
         }
-        else 
+        else
             name = xi = i;
-        
-        var children = self.subtags(xi);                
-        
+
+        var children = self.subtags(xi);
+
         var label = name;
         if (stc[xi]) {
             if (stc[xi] > 0)
@@ -1650,60 +1720,60 @@ function newTagTree(param) {
         }
         else {
             /*if (children.length==0)
-                return;*/
+             return;*/
         }
-                
+
         var b = newTagLayerDiv(xi, label);
-        
-        if (children.length > 0) {     
+
+        if (children.length > 0) {
             b.children = [];
             _.each(children, function(c) {
                 subtree(b.children, self.tag(c));
-            });                            
+            });
         }
-        
-        root.push( b );
+
+        root.push(b);
     }
-    
+
     function othersubtree(root) {
         var otherFolder = {
             label: 'Other',
             children: []
         };
-        
+
         var others = [];
         for (var c in stc) {
             if (!self.tag(c))
                 others.push(c);
         }
-        
+
         if (others.length == 0)
             return;
-                
+
         _.each(others, function(c) {
             subtree(otherFolder.children, c);
         });
         root.push(otherFolder);
     }
-    
+
     var roots = self.tagRoots();
     _.each(roots, function(t) {
-       subtree(T, self.tag(t));
-    });    
+        subtree(T, self.tag(t));
+    });
     othersubtree(T);
-    
+
     if (addToTree)
         addToTree(T);
-    
-    tree.appendTo(a);   
+
+    tree.appendTo(a);
     a.tree({
         data: T,
-		autoEscape: false,
-		selectable: false,
-		slide: false,
-		autoOpen: 2
-    });        
-    
+        autoEscape: false,
+        selectable: false,
+        slide: false,
+        autoOpen: 2
+    });
+
     return tree;
-    
+
 }
